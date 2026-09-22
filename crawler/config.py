@@ -5,7 +5,7 @@ from pathlib import Path
 RAW_DIR = Path("data/raw")
 
 # Limites da coleta
-MAX_DOCUMENTS = 10
+MAX_DOCUMENTS = 10 * 2
 MAX_STORAGE_GB = 20
 MAX_EXECUTION_HOURS = 24
 

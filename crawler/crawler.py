@@ -5,6 +5,7 @@ from crawlee.crawlers import ParselCrawler, ParselCrawlingContext
 from crawler.encoding import resolve_encoding
 from crawler.storage import save_document
 from crawler.stats import CrawlStats, StopReason
+from crawler.seeds import SEED_URLS
 
 from crawler.config import (
     MAX_DOCUMENTS,
@@ -90,7 +91,7 @@ async def main() -> None:
     stats_lock = asyncio.Lock()
 
     crawler = ParselCrawler(
-        max_requests_per_crawl=MAX_DOCUMENTS*2 + 20,
+        max_requests_per_crawl=MAX_DOCUMENTS,
         respect_robots_txt_file=RESPECT_ROBOTS_TXT,
     )
 
@@ -105,7 +106,7 @@ async def main() -> None:
 
     try:
         async with asyncio.timeout(MAX_EXECUTION_HOURS * 3600):
-            await crawler.run(["https://books.toscrape.com/"])
+            await crawler.run(SEED_URLS)
 
     except TimeoutError:
 
