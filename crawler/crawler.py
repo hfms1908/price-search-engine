@@ -1,6 +1,13 @@
 import asyncio
 
-from crawlee.crawlers import ParselCrawler, ParselCrawlingContext
+from crawlee.crawlers import (
+    BasicCrawlingContext,
+    ParselCrawler,
+    ParselCrawlingContext
+)
+from crawlee.request_loaders import ThrottlingRequestManager
+from crawlee.storages import RequestQueue
+from crawlee import HttpHeaders
 
 from crawler.encoding import resolve_encoding
 from crawler.storage import save_document
@@ -13,6 +20,7 @@ from crawler.config import (
     MAX_STORAGE_GB,
     MAX_EXECUTION_HOURS,
     RESPECT_ROBOTS_TXT,
+    REQUEST_HEADERS,
 )
 
 
@@ -118,11 +126,23 @@ async def main() -> None:
 
     stats_lock = asyncio.Lock()
 
+    request_queue = await RequestQueue.open()
+
+    request_manager = ThrottlingRequestManager(
+        request_queue,
+        domains=list(ALLOWED_DOMAINS),
+        request_manager_opener=RequestQueue.open,
+    )
+
     crawler = ParselCrawler(
+        request_manager=request_manager,
         max_requests_per_crawl=MAX_DOCUMENTS,
         respect_robots_txt_file=RESPECT_ROBOTS_TXT,
     )
 
+    @crawler.pre_navigation_hook
+    async def setup_request(context: BasicCrawlingContext,) -> None:
+        context.request.headers |= HttpHeaders(REQUEST_HEADERS)
 
     @crawler.router.default_handler
     async def handler(context: ParselCrawlingContext) -> None:
