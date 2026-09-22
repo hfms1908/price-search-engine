@@ -73,12 +73,12 @@ class CrawlStats:
     def summary(self) -> str:
         return (
             "\n"
-            "========== RESUMO DA COLETA ==========\n"
-            f"Requisições processadas : {self.requests_processed}\n"
-            f"Documentos salvos : {self.documents_saved}\n"
-            f"Erros de armazenamento  : {self.storage_errors}\n"
-            f"Dados armazenados : {self.storage_gb():.6f} GB\n"
-            f"Tempo de execução  : {self.elapsed_hours():.4f} horas\n"
-            f"Motivo da parada   : {self.stop_reason.name}\n"
-            "======================================"
+            "============ RESUMO DA COLETA ============\n"
+            f"Requisições processadas: {self.requests_processed}\n"
+            f"Documentos salvos......: {self.documents_saved}\n"
+            f"Erros de armazenamento.: {self.storage_errors}\n"
+            f"Dados armazenados......: {self.storage_gb():.6f} GB\n"
+            f"Tempo de execução......: {self.elapsed_hours():.4f} horas\n"
+            f"Motivo da parada.......: {self.stop_reason.name}\n"
+            "=========================================="
         )
