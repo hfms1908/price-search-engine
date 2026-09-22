@@ -97,8 +97,15 @@ async def request_handler(
         )
         return
 
-    # Descobre novos links
-    await context.enqueue_links()
+    links = await context.extract_links(strategy="all")
+
+    filtered_links = [
+        request
+        for request in links
+        if should_crawl(request.url, ALLOWED_DOMAINS)
+    ]
+
+    await context.add_requests(filtered_links)
 
 
 async def main() -> None:
