@@ -7,6 +7,11 @@ from typing import Any
 from crawler.config import RAW_DIR
 
 
+class StorageError(Exception):
+    """Erro durante o armazenamento de um documento."""
+    pass
+
+
 def generate_document_id(url: str) -> str:
     """Gera um identificador único baseado na URL."""
 
@@ -46,33 +51,45 @@ def save_document(
     html_path = RAW_DIR / html_filename
     json_path = RAW_DIR / json_filename
 
-    # Salva o HTML normalizado em UTF-8
-    html_path.write_text(
-        html,
-        encoding="utf-8",
-    )
+    try:
+        # Salva o HTML normalizado em UTF-8
+        html_path.write_text(
+            html,
+            encoding="utf-8",
+        )
 
-    # Obtém o tamanho real do arquivo salvo
-    size_bytes = html_path.stat().st_size
+        # Obtém o tamanho real do arquivo salvo
+        size_bytes = html_path.stat().st_size
 
-    metadata = {
-        "document_id": document_id,
-        "url": url,
-        "collected_at": collected_at.isoformat(),
-        "status_code": status_code,
-        "original_encoding": encoding,
-        "stored_encoding": "utf-8",
-        "size_bytes": size_bytes,
-        "html_file": html_filename,
-    }
+        metadata = {
+            "document_id": document_id,
+            "url": url,
+            "collected_at": collected_at.isoformat(),
+            "status_code": status_code,
+            "original_encoding": encoding,
+            "stored_encoding": "utf-8",
+            "size_bytes": size_bytes,
+            "html_file": html_filename,
+        }
 
-    json_path.write_text(
-        json.dumps(
-            metadata,
-            ensure_ascii=False,
-            indent=4,
-        ),
-        encoding="utf-8",
-    )
+        json_path.write_text(
+            json.dumps(
+                metadata,
+                ensure_ascii=False,
+                indent=4,
+            ),
+            encoding="utf-8",
+        )
+    except OSError as error:
+        # Remove HTML incompleto ou sem JSON
+        if html_path.exists():
+            html_path.unlink()
+
+        if json_path.exists():
+            json_path.unlink()
+
+        raise StorageError(
+            f"Erro ao armazenar documento: {url}"
+        ) from error
 
     return metadata

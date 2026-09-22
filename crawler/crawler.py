@@ -47,6 +47,7 @@ async def main() -> None:
                 encoding,
                 errors="replace",
             )
+        
         except LookupError:
             context.log.warning(
                 f"Encoding desconhecido '{encoding}' em {url}. Utilizando UTF-8."
@@ -64,12 +65,17 @@ async def main() -> None:
             if stats.should_stop():
                 return
             
-            metadata = save_document(
-                url=url,
-                html=html,
-                encoding=encoding,
-                status_code=context.http_response.status_code,
-            )
+            try:
+                metadata = save_document(
+                        url=url,
+                        html=html,
+                        encoding=encoding,
+                        status_code=context.http_response.status_code,
+                    )
+            
+            except StorageError as error:
+                context.log.error(str(error))
+                raise
 
             stats.register_document(metadata["size_bytes"])
 
