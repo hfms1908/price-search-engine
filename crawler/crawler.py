@@ -5,7 +5,8 @@ from crawlee.crawlers import ParselCrawler, ParselCrawlingContext
 from crawler.encoding import resolve_encoding
 from crawler.storage import save_document
 from crawler.stats import CrawlStats, StopReason
-from crawler.seeds import SEED_URLS
+from crawler.seeds import SEED_URLS, ALLOWED_DOMAINS
+from crawler.filters import should_crawl, is_allowed_content_type
 
 from crawler.config import (
     MAX_DOCUMENTS,
@@ -29,12 +30,29 @@ async def request_handler(
 
     url = context.request.url
 
+    # Verifica se a URL atende aos critérios de coleta
+    if not should_crawl(url, ALLOWED_DOMAINS):
+        context.log.info(f"URL ignorada pelo filtro: {url}")
+        return
+
     context.log.info(f"Processando: {url}")
 
+    # Verifica se o conteúdo retornado é HTML
+    content_type = context.http_response.headers.get("content-type", "")
+
+    if not is_allowed_content_type(content_type):
+        context.log.info(
+            f"Conteúdo ignorado: {url} "
+            f"(Content-Type: {content_type or 'não informado'})"
+        )
+        return
+
+    # Lê o conteúdo da resposta
     content = await context.http_response.read()
 
     encoding = resolve_encoding(context)
 
+    # Decodifica o conteúdo
     try:
         html = content.decode(encoding, errors="replace")
     
@@ -47,6 +65,7 @@ async def request_handler(
 
         html = content.decode(encoding, errors="replace")
 
+    # Região crítica: verifica limite, salva e contabiliza o documento
     async with stats_lock:
 
         try:
@@ -54,6 +73,7 @@ async def request_handler(
                 url=url,
                 html=html,
                 encoding=encoding,
+                content_type=content_type,
                 status_code=context.http_response.status_code,
             )
         
@@ -69,6 +89,7 @@ async def request_handler(
             f"({stats.documents_saved}/{MAX_DOCUMENTS})"
         )
 
+    # Verifica se algum limite foi atingido
     if stats.should_stop():
         context.log.info(
             f"Critério de parada atingido: "

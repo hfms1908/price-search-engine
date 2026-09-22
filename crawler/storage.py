@@ -24,6 +24,7 @@ def save_document(
     url: str,
     html: str,
     encoding: str,
+    content_type: str,
     status_code: int,
 ) -> dict[str, Any]:
     """Salva o HTML coletado e seus metadados."""
@@ -66,6 +67,7 @@ def save_document(
             "url": url,
             "collected_at": collected_at.isoformat(),
             "status_code": status_code,
+            "content_type": content_type,
             "original_encoding": encoding,
             "stored_encoding": "utf-8",
             "size_bytes": size_bytes,
