@@ -18,6 +18,8 @@ class CrawlStats:
 
     documents_saved: int = 0
     storage_bytes: int = 0
+    requests_processed: int = 0
+    storage_errors: int = 0
     started_at: float = field(
         default_factory=time.monotonic
     )
@@ -55,11 +57,26 @@ class CrawlStats:
     def elapsed_hours(self) -> float:
         return self.elapsed_seconds() / 3600
 
+    def register_request(self) -> None:
+        self.requests_processed += 1
+
+
+    def register_storage_error(self) -> None:
+        self.storage_errors += 1
+
+    def register_stop_reason(
+        self,
+        reason: StopReason,
+    ) -> None:
+        self.stop_reason = reason
+
     def summary(self) -> str:
         return (
             "\n"
             "========== RESUMO DA COLETA ==========\n"
+            f"Requisições processadas : {self.requests_processed}\n"
             f"Documentos salvos : {self.documents_saved}\n"
+            f"Erros de armazenamento  : {self.storage_errors}\n"
             f"Dados armazenados : {self.storage_gb():.6f} GB\n"
             f"Tempo de execução  : {self.elapsed_hours():.4f} horas\n"
             f"Motivo da parada   : {self.stop_reason.name}\n"
