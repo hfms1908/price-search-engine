@@ -1,22 +1,15 @@
-import re
 import asyncio
-import hashlib
-from datetime import datetime
-from pathlib import Path
 
 from crawlee.crawlers import ParselCrawler, ParselCrawlingContext
 
 from crawler.encoding import resolve_encoding
+from crawler.storage import save_document
 from crawler.config import (
     MAX_DOCUMENTS,
     MAX_STORAGE_GB,
     MAX_EXECUTION_HOURS,
     RESPECT_ROBOTS_TXT,
 )
-
-
-RAW_DIR = Path("data/raw")
-RAW_DIR.mkdir(parents=True, exist_ok=True)
 
 
 async def main() -> None:
@@ -55,23 +48,15 @@ async def main() -> None:
                 errors="replace",
             )
 
-        # Cria um nome único para o arquivo
-        url_hash = hashlib.sha256(
-            url.encode("utf-8")
-        ).hexdigest()[:16]
-
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-        filename = RAW_DIR / f"{timestamp}_{url_hash}.html"
-
-        # Salva o HTML bruto
-        filename.write_text(
-            html,
-            encoding="utf-8"
+        metadata = save_document(
+            url=url,
+            html=html,
+            encoding=encoding,
+            status_code=context.http_response.status_code,
         )
 
         context.log.info(
-            f"Arquivo salvo: {filename}"
+            f"Documento salvo: {metadata['html_file']}"
         )
 
         # Descobre novos links
