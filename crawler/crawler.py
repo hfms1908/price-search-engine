@@ -13,7 +13,11 @@ from crawler.encoding import resolve_encoding
 from crawler.storage import save_document
 from crawler.stats import CrawlStats, StopReason
 from crawler.seeds import SEED_URLS, ALLOWED_DOMAINS
-from crawler.filters import should_crawl, is_allowed_content_type
+from crawler.filters import (
+    should_crawl,
+    is_allowed_content_type,
+    is_blocked_page
+)
 
 from crawler.config import (
     MAX_DOCUMENTS,
@@ -63,7 +67,11 @@ async def request_handler(
     # Decodifica o conteúdo
     try:
         html = content.decode(encoding, errors="replace")
-    
+
+        if is_blocked_page(html):
+            context.log.warning(f"Página de proteção/bloqueio detectada: {url}")
+            return
+
     except LookupError:
         context.log.warning(
             f"Encoding desconhecido '{encoding}' em {url}. Utilizando UTF-8."

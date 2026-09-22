@@ -60,3 +60,18 @@ def is_allowed_content_type(content_type: str) -> bool:
         "text/xml",
         "application/xhtml+xml",
     }
+
+
+def is_blocked_page(html: str) -> bool:
+    indicators = (
+        "sec-if-cpt-container",
+        "scf-akamai-protected-by",
+        "Powered and protected by",
+    )
+
+    html_lower = html.lower()
+
+    return any(
+        indicator.lower() in html_lower
+        for indicator in indicators
+    )
