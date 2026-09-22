@@ -18,10 +18,13 @@ def is_allowed_domain(url: str, allowed_domains: set[str]) -> bool:
 
     hostname = hostname.lower()
 
-    return hostname in {
-        domain.lower()
-        for domain in allowed_domains
-    }
+    for domain in allowed_domains:
+        domain = domain.lower()
+
+        if (hostname == domain or hostname.endswith(f".{domain}")):
+            return True
+    
+    return False
 
 
 def is_allowed_extension(url: str) -> bool:
