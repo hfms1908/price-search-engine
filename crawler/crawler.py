@@ -98,7 +98,7 @@ async def request_handler(
             context.log.error(str(error))
             raise
 
-        stats.register_document(metadata["size_bytes"])
+        stats.register_document(url, metadata["size_bytes"])
 
         context.log.info(
             f"Documento salvo: {metadata['html_file']} "

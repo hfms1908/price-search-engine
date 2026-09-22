@@ -1,7 +1,7 @@
 SOURCES = {
     "magazineluiza": {
         "seed": "https://www.magazineluiza.com.br/busca/smartphone/",
-        domain: "magazineluiza.com.br",
+        "domain": "magazineluiza.com.br",
     },
     "kabum": {
         "seed": "https://www.kabum.com.br/celular-smartphone/smartphones",
@@ -69,4 +69,14 @@ SOURCES = {
         ),
         "domain": "oficinadosbits.com.br",
     },
+}
+
+SEED_URLS = [
+    source["seed"]
+    for source in SOURCES.values()
+]
+
+ALLOWED_DOMAINS = {
+    source["domain"]
+    for source in SOURCES.values()
 }
