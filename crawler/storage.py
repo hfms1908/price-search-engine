@@ -1,7 +1,6 @@
 import hashlib
 import json
 from datetime import datetime
-from pathlib import Path
 from typing import Any
 
 from crawler.config import RAW_DIR
@@ -38,13 +37,7 @@ def save_document(
 
     document_id = generate_document_id(url)
 
-    timestamp = collected_at.strftime(
-        "%Y%m%d_%H%M%S"
-    )
-
-    base_name = (
-        f"{timestamp}_{document_id}"
-    )
+    base_name = document_id
 
     html_filename = f"{base_name}.html"
     json_filename = f"{base_name}.json"
@@ -62,10 +55,13 @@ def save_document(
         # Obtém o tamanho real do arquivo salvo
         size_bytes = html_path.stat().st_size
 
+        first_collected_at = collected_at.isoformat(),
+
         metadata = {
             "document_id": document_id,
             "url": url,
-            "collected_at": collected_at.isoformat(),
+            "first_collected_at": first_collected_at,
+            "last_collected_at": first_collected_at,
             "status_code": status_code,
             "content_type": content_type,
             "original_encoding": encoding,
@@ -73,6 +69,20 @@ def save_document(
             "size_bytes": size_bytes,
             "html_file": html_filename,
         }
+
+        if json_path.exists():
+            try:
+                old_metadata = json.loads(
+                    json_path.read_text(encoding="utf-8")
+                )
+
+                first_collected_at = old_metadata.get(
+                    "first_collected_at",
+                    first_collected_at,
+                ),
+
+            except (json.JSONDecodeError):
+                pass
 
         json_path.write_text(
             json.dumps(
@@ -95,3 +105,12 @@ def save_document(
         ) from error
 
     return metadata
+
+
+def document_exists(url: str) -> bool:
+    document_id = generate_document_id(url)
+
+    html_path = RAW_DIR / f"{document_id}.html"
+    json_path = RAW_DIR / f"{document_id}.json"
+
+    return html_path.exists() and json_path.exists()

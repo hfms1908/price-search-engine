@@ -97,7 +97,7 @@ ALLOWED_DOMAINS = {
 }
 
 
-def get_source(url: str) -> str | None:
+def get_source(url: str) -> str:
     """
     Retorna o identificador da fonte associada à URL.
 
@@ -113,7 +113,7 @@ def get_source(url: str) -> str | None:
     hostname = urlparse(url).hostname
 
     if not hostname:
-        return None
+        return "unknown"
 
     hostname = hostname.lower()
 

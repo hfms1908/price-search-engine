@@ -1,13 +1,14 @@
 from pathlib import Path
-
+from enum import Enum, auto
 
 # Diretórios
 RAW_DIR = Path("data/raw")
 
-# Limites da coleta
-MAX_DOCUMENTS = 100
+# Limites da coleta e requisições
+MAX_DOCUMENTS = 10
 MAX_STORAGE_GB = 20
 MAX_EXECUTION_HOURS = 24
+MAX_REQUESTS = MAX_DOCUMENTS * 4
 
 # Limites de concorrência e tempo entre requisições
 MAX_CONCURRENCY = 6
@@ -32,3 +33,11 @@ REQUEST_HEADERS = {
     ),
     "Upgrade-Insecure-Requests": "1",
 }
+
+
+class CollectionMode(Enum):
+    INCREMENTAL = auto()
+    REFRESH = auto()
+
+
+COLLECTION_MODE = CollectionMode.INCREMENTAL

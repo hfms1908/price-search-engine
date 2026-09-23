@@ -20,11 +20,13 @@ class CrawlStats:
     max_execution_seconds: float
 
     documents_saved: int = 0
+    documents_updated: int = 0
     storage_bytes: int = 0
     requests_processed: int = 0
     storage_errors: int = 0
 
-    documents_by_source: dict[str, int] = field(default_factory=dict)
+    documents_added_by_source: dict[str, int] = field(default_factory=dict)
+    documents_updated_by_source: dict[str, int] = field(default_factory=dict)
     http_errors: dict[int, int] = field(default_factory=dict)
 
     links_discovered_by_source: dict[str, int] = field(default_factory=dict)
@@ -44,8 +46,20 @@ class CrawlStats:
 
         source_id = get_source(url)
 
-        self.documents_by_source[source_id] = (
-            self.documents_by_source.get(source_id, 0) + 1
+        self.documents_added_by_source[source_id] = (
+            self.documents_added_by_source.get(source_id, 0) + 1
+        )
+
+    def register_updated_document(self, url: str) -> None:
+        self.documents_updated += 1
+
+        source_id = get_source(url)
+
+        self.documents_updated_by_source[source_id] = (
+            self.documents_updated_by_source.get(
+                source_id,
+                0,
+            ) + 1
         )
 
     def register_http_error(self, status_code: int) -> None:
@@ -60,9 +74,6 @@ class CrawlStats:
         accepted: int,
     ) -> None:
         source_id = get_source(source_url)
-
-        if source_id is None:
-            source_id = "unknown"
 
         rejected = discovered - accepted
 
@@ -87,8 +98,11 @@ class CrawlStats:
             ) + rejected
         )
 
+    def documents_processed(self) -> int:
+        return self.documents_saved + self.documents_updated
+
     def should_stop(self) -> bool:
-        if self.documents_saved >= self.max_documents:
+        if self.documents_processed() >= self.max_documents:
             self.stop_reason = StopReason.MAX_DOCUMENTS
             return True
 
@@ -122,31 +136,50 @@ class CrawlStats:
 
     def summary(self) -> str:
         lines = [
-            "",
-            "=========================== RESUMO DA COLETA ===========================",
-            f"Requisições processadas: {self.requests_processed}",
-            f"Documentos salvos......: {self.documents_saved}",
-            f"Erros de armazenamento.: {self.storage_errors}"
-            f"Dados armazenados......: {self.storage_gb():.6f} GB",
-            f"Tempo de execução......: {self.elapsed_hours():.4f} horas",
-            f"Motivo da parada.......: {self.stop_reason.name}",
-            "",
-            "Documentos por fonte....: ",
+            "\n"
+            "=========================== RESUMO DA COLETA ===========================\n"
+            f"Requisições processadas: {self.requests_processed}\n"
+            f"Documentos processados.: {self.documents_processed()}\n"
+            f"Documentos adicionados.: {self.documents_saved}\n"
+            f"Documentos atualizados.: {self.documents_updated}\n"
+            f"Erros de armazenamento.: {self.storage_errors}\n"
+            f"Dados armazenados......: {self.storage_gb():.6f} GB\n"
+            f"Tempo de execução......: {self.elapsed_hours():.4f} horas\n"
+            f"Motivo da parada.......: {self.stop_reason.name}\n"
+            "\n"
+            "Documentos por fonte: \n"
+            f"  {'Fonte':<35}"
+            f"{'Adicionados':>12}"
+            f"{'Atualizados':>14}"
         ]
 
-        if self.documents_by_source:
-            for source_id, count in sorted(
-                self.documents_by_source.items(),
-                key=lambda item: item[1],
-                reverse=True,
-            ):
+        all_document_sources = (
+            set(self.documents_added_by_source)
+            | set(self.documents_updated_by_source)
+        )
+
+        if all_document_sources:
+            for source_id in sorted(all_document_sources):
                 source_name = get_source_name(source_id)
-                lines.append(f"  {source_name:<30} {count:>6}")
+
+                added_count = (
+                    self.documents_added_by_source.get(source_id, 0)
+                )
+
+                updated_count = (
+                    self.documents_updated_by_source.get(source_id, 0)
+                )
+
+                lines.append(
+                    f"  {source_name:<35}"
+                    f"{added_count:>12}"
+                    f"{updated_count:>14}"
+                )
         else:
             lines.append("  Nenhum documento armazenado.")
 
         lines.append("")
-        lines.append("Links por fonte........:")
+        lines.append("Links por fonte:")
         lines.append(
             f"  {'Fonte':<35}"
             f"{'Descobertos':>12}"
@@ -182,7 +215,7 @@ class CrawlStats:
             )
 
         lines.append("")
-        lines.append("Erros HTTP.............:")
+        lines.append("Erros HTTP:")
 
         if self.http_errors:
             for status_code, count in sorted(

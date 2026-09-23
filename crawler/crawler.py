@@ -5,19 +5,26 @@ from crawlee.crawlers import (
     ParselCrawler,
     ParselCrawlingContext
 )
+
 from crawlee.request_loaders import ThrottlingRequestManager
 from crawlee.storages import RequestQueue
 from crawlee import HttpHeaders
 from crawlee import ConcurrencySettings
 
 from crawler.encoding import resolve_encoding
-from crawler.storage import save_document
 from crawler.stats import CrawlStats, StopReason
+from crawler.storage import (
+    save_document,
+    document_exists,
+    StorageError,
+)
+
 from crawler.seeds import (
     SEED_URLS,
     ALLOWED_DOMAINS,
     # THROTTLED_DOMAINS,
 )
+
 from crawler.filters import (
     should_crawl,
     is_allowed_content_type,
@@ -30,9 +37,12 @@ from crawler.config import (
     MAX_TASKS_PER_MINUTE,
     MAX_DOCUMENTS,
     MAX_STORAGE_GB,
+    MAX_REQUESTS,
     MAX_EXECUTION_HOURS,
     RESPECT_ROBOTS_TXT,
     REQUEST_HEADERS,
+    CollectionMode,
+    COLLECTION_MODE
 )
 
 
@@ -65,6 +75,12 @@ async def request_handler(
             f"Conteúdo ignorado: {url} "
             f"(Content-Type: {content_type or 'não informado'})"
         )
+        return
+
+    already_collected = document_exists(url)
+
+    if (COLLECTION_MODE == CollectionMode.INCREMENTAL and already_collected):
+        context.log.info(f"Documento já coletado. Ignorando: {url}")
         return
 
     # Lê o conteúdo da resposta
@@ -106,7 +122,10 @@ async def request_handler(
             context.log.error(str(error))
             raise
 
-        stats.register_document(url, metadata["size_bytes"])
+        if already_collected:
+            stats.register_updated_document()
+        else:
+            stats.register_document(url, metadata["size_bytes"])
 
         context.log.info(
             f"Documento salvo: {metadata['html_file']} "
@@ -167,7 +186,7 @@ async def main() -> None:
     crawler = ParselCrawler(
         request_manager=request_manager,
         concurrency_settings=concurrency_settings,
-        max_requests_per_crawl=MAX_DOCUMENTS,
+        max_requests_per_crawl=MAX_REQUESTS,
         respect_robots_txt_file=RESPECT_ROBOTS_TXT,
     )
 
