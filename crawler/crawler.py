@@ -129,7 +129,7 @@ async def request_handler(
 
         context.log.info(
             f"Documento salvo: {metadata['html_file']} "
-            f"({stats.documents_saved}/{MAX_DOCUMENTS})"
+            f"({stats.documents_added}/{MAX_DOCUMENTS})"
         )
 
     # Verifica se algum limite foi atingido
@@ -207,7 +207,6 @@ async def main() -> None:
             await crawler.run(SEED_URLS)
 
     except TimeoutError:
-
         async with stats_lock:
             stats.register_stop_reason(StopReason.MAX_EXECUTION_TIME)
 
@@ -215,6 +214,11 @@ async def main() -> None:
             f"Tempo máximo de execução atingido: "
             f"{MAX_EXECUTION_HOURS} horas."
         )
+
+    if (stats.stop_reason == StopReason.NONE and
+        stats.requests_processed >= MAX_REQUESTS
+    ):
+        stats.register_stop_reason(StopReason.MAX_REQUESTS)
 
     print(stats.summary())
 

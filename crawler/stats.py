@@ -11,6 +11,7 @@ class StopReason(Enum):
     MAX_DOCUMENTS = auto()
     MAX_STORAGE = auto()
     MAX_EXECUTION_TIME = auto()
+    MAX_REQUESTS = auto()
 
 
 @dataclass
@@ -19,7 +20,7 @@ class CrawlStats:
     max_storage_bytes: int
     max_execution_seconds: float
 
-    documents_saved: int = 0
+    documents_added: int = 0
     documents_updated: int = 0
     storage_bytes: int = 0
     requests_processed: int = 0
@@ -41,7 +42,7 @@ class CrawlStats:
         return time.monotonic() - self.started_at
 
     def register_document(self, url: str, size_bytes: int) -> None:
-        self.documents_saved += 1
+        self.documents_added += 1
         self.storage_bytes += size_bytes
 
         source_id = get_source(url)
@@ -99,7 +100,7 @@ class CrawlStats:
         )
 
     def documents_processed(self) -> int:
-        return self.documents_saved + self.documents_updated
+        return self.documents_added + self.documents_updated
 
     def should_stop(self) -> bool:
         if self.documents_processed() >= self.max_documents:
@@ -128,10 +129,7 @@ class CrawlStats:
     def register_storage_error(self) -> None:
         self.storage_errors += 1
 
-    def register_stop_reason(
-        self,
-        reason: StopReason,
-    ) -> None:
+    def register_stop_reason(self, reason: StopReason) -> None:
         self.stop_reason = reason
 
     def summary(self) -> str:
@@ -140,7 +138,7 @@ class CrawlStats:
             "=========================== RESUMO DA COLETA ===========================\n"
             f"Requisições processadas: {self.requests_processed}\n"
             f"Documentos processados.: {self.documents_processed()}\n"
-            f"Documentos adicionados.: {self.documents_saved}\n"
+            f"Documentos adicionados.: {self.documents_added}\n"
             f"Documentos atualizados.: {self.documents_updated}\n"
             f"Erros de armazenamento.: {self.storage_errors}\n"
             f"Dados armazenados......: {self.storage_gb():.6f} GB\n"
