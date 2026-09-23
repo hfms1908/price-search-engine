@@ -129,6 +129,14 @@ async def request_handler(
         if should_crawl(request.url, ALLOWED_DOMAINS)
     ]
 
+    # Registra estatísticas de links descobertos, aceitos e rejeitados
+    async with stats_lock:
+        stats.register_links(
+            source_url=url,
+            discovered=len(links),
+            accepted=len(filtered_links),
+        )
+
     await context.add_requests(filtered_links)
 
 

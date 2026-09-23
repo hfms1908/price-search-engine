@@ -1,4 +1,5 @@
 import time
+
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from urllib.parse import urlparse
@@ -25,9 +26,27 @@ class CrawlStats:
     documents_by_domain: dict[str, int] = field(default_factory=dict)
     http_errors: dict[int, int] = field(default_factory=dict)
 
+    links_discovered_by_domain: dict[str, int] = field(default_factory=dict)
+    links_accepted_by_domain: dict[str, int] = field(default_factory=dict)
+    links_rejected_by_domain: dict[str, int] = field(default_factory=dict)
+
     started_at: float = field(default_factory=time.monotonic)
     
     stop_reason: StopReason = StopReason.NONE
+
+    @staticmethod
+    def get_hostname(url: str) -> str:
+        hostname = urlparse(url).hostname
+
+        if not hostname:
+            return "unknown"
+
+        hostname = hostname.lower()
+
+        if hostname.startswith("www."):
+            hostname = hostname[4:]
+
+        return hostname
 
     def elapsed_seconds(self) -> float:
         return time.monotonic() - self.started_at
@@ -36,22 +55,47 @@ class CrawlStats:
         self.documents_saved += 1
         self.storage_bytes += size_bytes
 
-        hostname = urlparse(url).hostname
+        hostname = self.get_hostname(url)
 
-        if hostname:
-            hostname = hostname.lower()
+        self.documents_by_domain[hostname] = (
+            self.documents_by_domain.get(hostname, 0) + 1
+        )
 
-            if hostname.startswith("www."):
-                hostname = hostname[4:]
+    def register_http_error(self, status_code: int) -> None:
+        self.http_errors[status_code] = (
+            self.http_errors.get(status_code, 0) + 1
+        )
 
-            self.documents_by_domain[hostname] = (
-                self.documents_by_domain.get(hostname, 0) + 1
-            )
+    def register_links(
+        self,
+        source_url: str,
+        discovered: int,
+        accepted: int,
+    ) -> None:
+        hostname = self.get_hostname(source_url)
 
-        def register_http_error(self, status_code: int) -> None:
-            self.http_errors[status_code] = (
-                self.http_errors.get(status_code, 0) + 1
-            )
+        rejected = discovered - accepted
+
+        self.links_discovered_by_domain[hostname] = (
+            self.links_discovered_by_domain.get(
+                hostname,
+                0,
+            ) + discovered
+        )
+
+        self.links_accepted_by_domain[hostname] = (
+            self.links_accepted_by_domain.get(
+                hostname,
+                0,
+            ) + accepted
+        )
+
+        self.links_rejected_by_domain[hostname] = (
+            self.links_rejected_by_domain.get(
+                hostname,
+                0,
+            ) + rejected
+        )
 
     def should_stop(self) -> bool:
         if self.documents_saved >= self.max_documents:
@@ -88,16 +132,16 @@ class CrawlStats:
 
     def summary(self) -> str:
         lines = [
-            ""
-            "============ RESUMO DA COLETA ============\n"
-            f"Requisições processadas: {self.requests_processed}\n"
-            f"Documentos salvos......: {self.documents_saved}\n"
-            f"Erros de armazenamento.: {self.storage_errors}\n"
-            f"Dados armazenados......: {self.storage_gb():.6f} GB\n"
-            f"Tempo de execução......: {self.elapsed_hours():.4f} horas\n"
-            f"Motivo da parada.......: {self.stop_reason.name}\n"
             "",
-            "Documentos por domínio..: ",
+            "=========================== RESUMO DA COLETA ===========================",
+            f"Requisições processadas: {self.requests_processed}",
+            f"Documentos salvos......: {self.documents_saved}",
+            f"Erros de armazenamento.: {self.storage_errors}"
+            f"Dados armazenados......: {self.storage_gb():.6f} GB",
+            f"Tempo de execução......: {self.elapsed_hours():.4f} horas",
+            f"Motivo da parada.......: {self.stop_reason.name}",
+            "",
+            "Documentos por domínio.: ",
         ]
 
         if self.documents_by_domain:
@@ -109,9 +153,42 @@ class CrawlStats:
                 lines.append(f"  {domain:<30} {count:>6}")
         else:
             lines.append("  Nenhum documento armazenado.")
-        
+
+        lines.append("Links por domínio......:")
+        lines.append(
+            f"  {'Domínio':<35}"
+            f"{'Descobertos':>12}"
+            f"{'Aceitos':>10}"
+            f"{'Rejeitados':>12}"
+        )
+
+        all_domains = (
+            set(self.links_discovered_by_domain)
+            | set(self.links_accepted_by_domain)
+            | set(self.links_rejected_by_domain)
+        )
+
+        if all_domains:
+            for domain in sorted(all_domains):
+                discovered = (self.links_discovered_by_domain.get(domain, 0))
+
+                accepted = (self.links_accepted_by_domain.get(domain, 0))
+
+                rejected = (self.links_rejected_by_domain.get(domain, 0))
+
+                lines.append(
+                    f"  {domain:<35}"
+                    f"{discovered:>12}"
+                    f"{accepted:>10}"
+                    f"{rejected:>12}"
+                )
+        else:
+            lines.append(
+                "  Nenhum link registrado."
+            )
+
         lines.append("")
-        lines.append("Erros HTTP..............:")
+        lines.append("Erros HTTP.............:")
 
         if self.http_errors:
             for status_code, count in sorted(
@@ -121,6 +198,6 @@ class CrawlStats:
         else:
             lines.append("  Nenhum erro HTTP registrado.")
 
-        lines.append("==========================================")
+        lines.append("========================================================================")
 
         return "\n".join(lines)
