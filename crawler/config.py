@@ -5,7 +5,7 @@ from enum import Enum, auto
 RAW_DIR = Path("data/raw")
 
 # Limites da coleta e requisições
-MAX_DOCUMENTS = 10
+MAX_DOCUMENTS = 100
 MAX_STORAGE_GB = 20
 MAX_EXECUTION_HOURS = 24
 MAX_REQUESTS = MAX_DOCUMENTS * 4
@@ -14,6 +14,9 @@ MAX_REQUESTS = MAX_DOCUMENTS * 4
 MAX_CONCURRENCY = 6
 DESIRED_CONCURRENCY = 6
 MAX_TASKS_PER_MINUTE = 60
+
+# Número máximo de links adicionados à fila por página
+MAX_LINKS_PER_PAGE = 100
 
 # Políticas de acesso
 RESPECT_ROBOTS_TXT = False

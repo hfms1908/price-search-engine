@@ -101,6 +101,12 @@ ALLOWED_DOMAINS = {
     for source in SOURCES.values()
 }
 
+THROTTLED_DOMAINS = [
+    urlparse(source["seed"]).hostname
+    for source in SOURCES.values()
+    if urlparse(source["seed"]).hostname
+]
+
 
 def get_source(url: str) -> str:
     """

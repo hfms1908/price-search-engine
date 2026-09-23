@@ -22,7 +22,7 @@ from crawler.storage import (
 from crawler.seeds import (
     SEED_URLS,
     ALLOWED_DOMAINS,
-    # THROTTLED_DOMAINS,
+    THROTTLED_DOMAINS,
 )
 
 from crawler.filters import (
@@ -39,6 +39,7 @@ from crawler.config import (
     MAX_STORAGE_GB,
     MAX_REQUESTS,
     MAX_EXECUTION_HOURS,
+    MAX_LINKS_PER_PAGE,
     RESPECT_ROBOTS_TXT,
     REQUEST_HEADERS,
     CollectionMode,
@@ -164,7 +165,9 @@ async def request_handler(
             accepted=len(filtered_links),
         )
 
-    await context.add_requests(filtered_links)
+    limited_links = filtered_links[:MAX_LINKS_PER_PAGE]
+
+    await context.add_requests(limited_links)
 
 
 async def main() -> None:
@@ -181,7 +184,7 @@ async def main() -> None:
 
     request_manager = ThrottlingRequestManager(
         inner=request_queue,
-        domains=list(ALLOWED_DOMAINS),
+        domains=THROTTLED_DOMAINS,
         request_manager_opener=RequestQueue.open,
     )
 
