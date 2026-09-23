@@ -107,6 +107,9 @@ THROTTLED_DOMAINS = [
     if urlparse(source["seed"]).hostname
 ]
 
+# Embaralha a ordem dos domínios a serem alternados pelo crwler
+random.shuffle(SEED_URLS)
+
 
 def get_source(url: str) -> str:
     """

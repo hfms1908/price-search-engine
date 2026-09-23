@@ -17,6 +17,7 @@ from crawler.storage import (
     save_document,
     document_exists,
     StorageError,
+    get_storage_size,
 )
 
 from crawler.seeds import (
@@ -133,7 +134,7 @@ async def request_handler(
                 raise
 
             if already_collected:
-                stats.register_updated_document()
+                stats.register_updated_document(url, metadata["size_bytes"])
             else:
                 stats.register_document(url, metadata["size_bytes"])
 
@@ -172,10 +173,13 @@ async def request_handler(
 
 async def main() -> None:
 
+    initial_storage_bytes = get_storage_size()
+
     stats = CrawlStats(
         max_documents=MAX_DOCUMENTS,
         max_storage_bytes=MAX_STORAGE_GB * (1024 ** 3),
         max_execution_seconds=MAX_EXECUTION_HOURS * 3600,
+        initial_storage_bytes=initial_storage_bytes,
     )
 
     stats_lock = asyncio.Lock()

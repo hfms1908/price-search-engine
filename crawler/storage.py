@@ -114,3 +114,18 @@ def document_exists(url: str) -> bool:
     json_path = RAW_DIR / f"{document_id}.json"
 
     return html_path.exists() and json_path.exists()
+
+
+def get_storage_size() -> int:
+    total_bytes = 0
+
+    if not RAW_DIR.exists():
+        return total_bytes
+
+    for file_path in RAW_DIR.glob("*.html"):
+        try:
+            total_bytes += file_path.stat().st_size
+        except OSError:
+            continue
+
+    return total_bytes

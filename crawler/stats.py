@@ -22,12 +22,19 @@ class CrawlStats:
 
     documents_added: int = 0
     documents_updated: int = 0
-    storage_bytes: int = 0
-    requests_processed: int = 0
-    storage_errors: int = 0
-
     documents_added_by_source: dict[str, int] = field(default_factory=dict)
     documents_updated_by_source: dict[str, int] = field(default_factory=dict)
+
+    requests_processed: int = 0
+
+    initial_storage_bytes: int = 0
+    storage_bytes_added: int = 0
+    @property
+    def total_storage_bytes(self) -> int:
+        return self.initial_storage_bytes + self.storage_bytes_added
+
+    storage_errors: int = 0
+
     http_errors: dict[int, int] = field(default_factory=dict)
 
     links_discovered_by_source: dict[str, int] = field(default_factory=dict)
@@ -43,7 +50,7 @@ class CrawlStats:
 
     def register_document(self, url: str, size_bytes: int) -> None:
         self.documents_added += 1
-        self.storage_bytes += size_bytes
+        self.storage_bytes_added += size_bytes
 
         source_id = get_source(url)
 
@@ -51,8 +58,9 @@ class CrawlStats:
             self.documents_added_by_source.get(source_id, 0) + 1
         )
 
-    def register_updated_document(self, url: str) -> None:
+    def register_updated_document(self, url: str, size_delta: int) -> None:
         self.documents_updated += 1
+        self.storage_bytes_added += size_delta
 
         source_id = get_source(url)
 
@@ -107,7 +115,7 @@ class CrawlStats:
             self.stop_reason = StopReason.MAX_DOCUMENTS
             return True
 
-        if self.storage_bytes >= self.max_storage_bytes:
+        if self.total_storage_bytes >= self.max_storage_bytes:
             self.stop_reason = StopReason.MAX_STORAGE
             return True
 
@@ -117,9 +125,15 @@ class CrawlStats:
 
         return False
 
-    def storage_gb(self) -> float:
-        return self.storage_bytes / (1024 ** 3)
+    def initial_storage_gb(self) -> float:
+        return self.initial_storage_bytes / (1024 ** 3)
 
+    def storage_added_gb(self) -> float:
+        return self.storage_bytes_added / (1024 ** 3)
+
+    def total_storage_gb(self) -> float:
+        return self.total_storage_bytes  / (1024 ** 3)
+    
     def elapsed_hours(self) -> float:
         return self.elapsed_seconds() / 3600
 
@@ -141,7 +155,9 @@ class CrawlStats:
             f"Documentos adicionados.: {self.documents_added}\n"
             f"Documentos atualizados.: {self.documents_updated}\n"
             f"Erros de armazenamento.: {self.storage_errors}\n"
-            f"Dados armazenados......: {self.storage_gb():.6f} GB\n"
+            f"Armazenamento inicial..: {self.initial_storage_gb():.6f} GB\n"
+            f"Dados adicionados......: {self.storage_added_gb():.6f} GB\n"
+            f"Armazenamento total....: {self.total_storage_gb():.6f} GB\n"
             f"Tempo de execução......: {self.elapsed_hours():.4f} horas\n"
             f"Motivo da parada.......: {self.stop_reason.name}\n"
             "\n"
