@@ -2,7 +2,8 @@ import time
 
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from urllib.parse import urlparse
+
+from crawler.seeds import get_source, get_source_name
 
 
 class StopReason(Enum):
@@ -23,30 +24,16 @@ class CrawlStats:
     requests_processed: int = 0
     storage_errors: int = 0
 
-    documents_by_domain: dict[str, int] = field(default_factory=dict)
+    documents_by_source: dict[str, int] = field(default_factory=dict)
     http_errors: dict[int, int] = field(default_factory=dict)
 
-    links_discovered_by_domain: dict[str, int] = field(default_factory=dict)
-    links_accepted_by_domain: dict[str, int] = field(default_factory=dict)
-    links_rejected_by_domain: dict[str, int] = field(default_factory=dict)
+    links_discovered_by_source: dict[str, int] = field(default_factory=dict)
+    links_accepted_by_source: dict[str, int] = field(default_factory=dict)
+    links_rejected_by_source: dict[str, int] = field(default_factory=dict)
 
     started_at: float = field(default_factory=time.monotonic)
     
     stop_reason: StopReason = StopReason.NONE
-
-    @staticmethod
-    def get_hostname(url: str) -> str:
-        hostname = urlparse(url).hostname
-
-        if not hostname:
-            return "unknown"
-
-        hostname = hostname.lower()
-
-        if hostname.startswith("www."):
-            hostname = hostname[4:]
-
-        return hostname
 
     def elapsed_seconds(self) -> float:
         return time.monotonic() - self.started_at
@@ -55,10 +42,10 @@ class CrawlStats:
         self.documents_saved += 1
         self.storage_bytes += size_bytes
 
-        hostname = self.get_hostname(url)
+        source_id = get_source(url)
 
-        self.documents_by_domain[hostname] = (
-            self.documents_by_domain.get(hostname, 0) + 1
+        self.documents_by_source[source_id] = (
+            self.documents_by_source.get(source_id, 0) + 1
         )
 
     def register_http_error(self, status_code: int) -> None:
@@ -72,27 +59,30 @@ class CrawlStats:
         discovered: int,
         accepted: int,
     ) -> None:
-        hostname = self.get_hostname(source_url)
+        source_id = get_source(source_url)
+
+        if source_id is None:
+            source_id = "unknown"
 
         rejected = discovered - accepted
 
-        self.links_discovered_by_domain[hostname] = (
-            self.links_discovered_by_domain.get(
-                hostname,
+        self.links_discovered_by_source[source_id] = (
+            self.links_discovered_by_source.get(
+                source_id,
                 0,
             ) + discovered
         )
 
-        self.links_accepted_by_domain[hostname] = (
-            self.links_accepted_by_domain.get(
-                hostname,
+        self.links_accepted_by_source[source_id] = (
+            self.links_accepted_by_source.get(
+                source_id,
                 0,
             ) + accepted
         )
 
-        self.links_rejected_by_domain[hostname] = (
-            self.links_rejected_by_domain.get(
-                hostname,
+        self.links_rejected_by_source[source_id] = (
+            self.links_rejected_by_source.get(
+                source_id,
                 0,
             ) + rejected
         )
@@ -141,43 +131,47 @@ class CrawlStats:
             f"Tempo de execução......: {self.elapsed_hours():.4f} horas",
             f"Motivo da parada.......: {self.stop_reason.name}",
             "",
-            "Documentos por domínio.: ",
+            "Documentos por fonte....: ",
         ]
 
-        if self.documents_by_domain:
-            for domain, count in sorted(
-                self.documents_by_domain.items(),
+        if self.documents_by_source:
+            for source_id, count in sorted(
+                self.documents_by_source.items(),
                 key=lambda item: item[1],
                 reverse=True,
             ):
-                lines.append(f"  {domain:<30} {count:>6}")
+                source_name = get_source_name(source_id)
+                lines.append(f"  {source_name:<30} {count:>6}")
         else:
             lines.append("  Nenhum documento armazenado.")
 
-        lines.append("Links por domínio......:")
+        lines.append("")
+        lines.append("Links por fonte........:")
         lines.append(
-            f"  {'Domínio':<35}"
+            f"  {'Fonte':<35}"
             f"{'Descobertos':>12}"
             f"{'Aceitos':>10}"
             f"{'Rejeitados':>12}"
         )
 
-        all_domains = (
-            set(self.links_discovered_by_domain)
-            | set(self.links_accepted_by_domain)
-            | set(self.links_rejected_by_domain)
+        all_sourd_ids = (
+            set(self.links_discovered_by_source)
+            | set(self.links_accepted_by_source)
+            | set(self.links_rejected_by_source)
         )
 
-        if all_domains:
-            for domain in sorted(all_domains):
-                discovered = (self.links_discovered_by_domain.get(domain, 0))
+        if all_sourd_ids:
+            for source_id in sorted(all_sourd_ids):
+                source_name = get_source_name(source_id)
+                
+                discovered = (self.links_discovered_by_source.get(source_id, 0))
 
-                accepted = (self.links_accepted_by_domain.get(domain, 0))
+                accepted = (self.links_accepted_by_source.get(source_id, 0))
 
-                rejected = (self.links_rejected_by_domain.get(domain, 0))
+                rejected = (self.links_rejected_by_source.get(source_id, 0))
 
                 lines.append(
-                    f"  {domain:<35}"
+                    f"  {source_name:<35}"
                     f"{discovered:>12}"
                     f"{accepted:>10}"
                     f"{rejected:>12}"
