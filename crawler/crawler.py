@@ -79,9 +79,13 @@ async def request_handler(
 
     already_collected = document_exists(url)
 
-    if (COLLECTION_MODE == CollectionMode.INCREMENTAL and already_collected):
+    skip_storage = (
+        COLLECTION_MODE == CollectionMode.INCREMENTAL
+        and already_collected
+    )
+
+    if (skip_storage):
         context.log.info(f"Documento já coletado. Ignorando: {url}")
-        return
 
     # Lê o conteúdo da resposta
     content = await context.http_response.read()
@@ -92,10 +96,6 @@ async def request_handler(
     try:
         html = content.decode(encoding, errors="replace")
 
-        if is_blocked_page(html):
-            context.log.warning(f"Página de proteção/bloqueio detectada: {url}")
-            return
-
     except LookupError:
         context.log.warning(
             f"Encoding desconhecido '{encoding}' em {url}. Utilizando UTF-8."
@@ -105,38 +105,46 @@ async def request_handler(
 
         html = content.decode(encoding, errors="replace")
 
-    # Região crítica: verifica limite, salva e contabiliza o documento
-    async with stats_lock:
+    if is_blocked_page(html):
+        context.log.warning(f"Página de proteção/bloqueio detectada: {url}")
+        return
 
-        try:
-            metadata = save_document(
-                url=url,
-                html=html,
-                encoding=encoding,
-                content_type=content_type,
-                status_code=context.http_response.status_code,
+    # Somente armazena quando necessário.
+    if not skip_storage:
+        if stats.should_stop():
+            return
+
+        # Região crítica: verifica limite, salva e contabiliza o documento
+        async with stats_lock:
+            
+            try:
+                metadata = save_document(
+                    url=url,
+                    html=html,
+                    encoding=encoding,
+                    content_type=content_type,
+                    status_code=context.http_response.status_code,
+                )
+            
+            except StorageError as error:
+                stats.register_storage_error()
+                context.log.error(str(error))
+                raise
+
+            if already_collected:
+                stats.register_updated_document()
+            else:
+                stats.register_document(url, metadata["size_bytes"])
+
+            context.log.info(
+                f"Documento salvo: {metadata['html_file']} "
+                f"({stats.documents_added}/{MAX_DOCUMENTS})"
             )
-        
-        except StorageError as error:
-            stats.register_storage_error()
-            context.log.error(str(error))
-            raise
 
-        if already_collected:
-            stats.register_updated_document()
-        else:
-            stats.register_document(url, metadata["size_bytes"])
-
-        context.log.info(
-            f"Documento salvo: {metadata['html_file']} "
-            f"({stats.documents_added}/{MAX_DOCUMENTS})"
-        )
-
-    # Verifica se algum limite foi atingido
+    # Verifica novamente o limite antes de descobrir novas URLs.
     if stats.should_stop():
         context.log.info(
-            f"Critério de parada atingido: "
-            f"{stats.stop_reason.name}"
+            f"Critério de parada atingido: {stats.stop_reason.name}"
         )
         return
 

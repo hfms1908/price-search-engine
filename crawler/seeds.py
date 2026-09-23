@@ -1,3 +1,5 @@
+import random
+
 from urllib.parse import urlparse
 
 
@@ -90,6 +92,9 @@ SEED_URLS = [
     source["seed"]
     for source in SOURCES.values()
 ]
+
+# Embaralha a ordem das URLs sementes
+random.shuffle(SEED_URLS)
 
 ALLOWED_DOMAINS = {
     source["domain"]
