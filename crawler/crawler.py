@@ -8,11 +8,16 @@ from crawlee.crawlers import (
 from crawlee.request_loaders import ThrottlingRequestManager
 from crawlee.storages import RequestQueue
 from crawlee import HttpHeaders
+from crawlee import ConcurrencySettings
 
 from crawler.encoding import resolve_encoding
 from crawler.storage import save_document
 from crawler.stats import CrawlStats, StopReason
-from crawler.seeds import SEED_URLS, ALLOWED_DOMAINS
+from crawler.seeds import (
+    SEED_URLS,
+    ALLOWED_DOMAINS,
+    # THROTTLED_DOMAINS,
+)
 from crawler.filters import (
     should_crawl,
     is_allowed_content_type,
@@ -20,6 +25,9 @@ from crawler.filters import (
 )
 
 from crawler.config import (
+    DESIRED_CONCURRENCY,
+    MAX_CONCURRENCY,
+    MAX_TASKS_PER_MINUTE,
     MAX_DOCUMENTS,
     MAX_STORAGE_GB,
     MAX_EXECUTION_HOURS,
@@ -137,13 +145,20 @@ async def main() -> None:
     request_queue = await RequestQueue.open()
 
     request_manager = ThrottlingRequestManager(
-        request_queue,
+        inner=request_queue,
         domains=list(ALLOWED_DOMAINS),
         request_manager_opener=RequestQueue.open,
     )
 
+    concurrency_settings = ConcurrencySettings(
+        desired_concurrency=DESIRED_CONCURRENCY,
+        max_concurrency=MAX_CONCURRENCY,
+        max_tasks_per_minute=MAX_TASKS_PER_MINUTE,
+    )
+
     crawler = ParselCrawler(
         request_manager=request_manager,
+        concurrency_settings=concurrency_settings,
         max_requests_per_crawl=MAX_DOCUMENTS,
         respect_robots_txt_file=RESPECT_ROBOTS_TXT,
     )

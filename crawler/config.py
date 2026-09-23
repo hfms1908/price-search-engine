@@ -9,8 +9,13 @@ MAX_DOCUMENTS = 100
 MAX_STORAGE_GB = 20
 MAX_EXECUTION_HOURS = 24
 
+# Limites de concorrência e tempo entre requisições
+MAX_CONCURRENCY = 6
+DESIRED_CONCURRENCY = 6
+MAX_TASKS_PER_MINUTE = 60
+
 # Políticas de acesso
-RESPECT_ROBOTS_TXT = True
+RESPECT_ROBOTS_TXT = False
 
 REQUEST_HEADERS = {
     "User-Agent": (
