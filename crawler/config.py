@@ -21,7 +21,7 @@ MAX_REQUESTS = 1_000_000
 REQUEST_DELAY_SECONDS = 2
 
 # Políticas de acesso
-RESPECT_ROBOTS_TXT = False
+RESPECT_ROBOTS_TXT = True
 
 REQUEST_HEADERS = {
     "User-Agent": (

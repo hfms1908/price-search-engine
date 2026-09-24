@@ -16,7 +16,7 @@ def generate_document_id(url: str) -> str:
 
     return hashlib.sha256(
         url.encode("utf-8")
-    ).hexdigest()[:16]
+    ).hexdigest()
 
 
 def save_document(
