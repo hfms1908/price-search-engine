@@ -37,10 +37,7 @@ def is_allowed_extension(url: str) -> bool:
 
 def should_crawl(url: str, allowed_domains: set[str]) -> bool:
 
-    if not is_allowed_domain(
-        url,
-        allowed_domains,
-    ):
+    if not is_allowed_domain(url, allowed_domains):
         return False
 
     if not is_allowed_extension(url):

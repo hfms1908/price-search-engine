@@ -4,19 +4,21 @@ from enum import Enum, auto
 # Diretórios
 RAW_DIR = Path("data/raw")
 
+# Timeout
+REQUEST_TIMEOUT = 10
+
+# Tentativas de requisição
+MAX_RETRIES = 3
+RETRY_DELAY_SECONDS = 5
+
 # Limites da coleta e requisições
-MAX_DOCUMENTS = 10
+MAX_DOCUMENTS = 100
 MAX_STORAGE_GB = 20
 MAX_EXECUTION_HOURS = 24
-MAX_REQUESTS = MAX_DOCUMENTS * 4
+MAX_REQUESTS = 1_000_000
 
-# Limites de concorrência e tempo entre requisições
-MAX_CONCURRENCY = 6
-DESIRED_CONCURRENCY = 6
-MAX_TASKS_PER_MINUTE = 60
-
-# Número máximo de links adicionados à fila por página
-MAX_LINKS_PER_PAGE = 20
+# Intervalo mínimo entre requisições no mesmo domínio
+REQUEST_DELAY_SECONDS = 2
 
 # Políticas de acesso
 RESPECT_ROBOTS_TXT = False

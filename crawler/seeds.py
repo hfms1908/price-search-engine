@@ -1,5 +1,3 @@
-import random
-
 from urllib.parse import urlparse
 
 
@@ -93,25 +91,13 @@ SEED_URLS = [
     for source in SOURCES.values()
 ]
 
-# Embaralha a ordem das URLs sementes
-random.shuffle(SEED_URLS)
-
 ALLOWED_DOMAINS = {
     source["domain"]
     for source in SOURCES.values()
 }
 
-THROTTLED_DOMAINS = [
-    urlparse(source["seed"]).hostname
-    for source in SOURCES.values()
-    if urlparse(source["seed"]).hostname
-]
 
-# Embaralha a ordem dos domínios a serem alternados pelo crwler
-random.shuffle(SEED_URLS)
-
-
-def get_source(url: str) -> str:
+def get_source(url: str) -> str | None:
     """
     Retorna o identificador da fonte associada à URL.
 
@@ -127,7 +113,7 @@ def get_source(url: str) -> str:
     hostname = urlparse(url).hostname
 
     if not hostname:
-        return "unknown"
+        return None
 
     hostname = hostname.lower()
 
@@ -144,12 +130,12 @@ def get_source_name(source_id: str) -> str:
     """
     Retorna o nome amigável da fonte.
     """
-    if source_id == "unknown":
+    if source_id is None:
         return "Desconhecida"
 
     source = SOURCES.get(source_id)
 
-    if not source:
+    if source is None:
         return source_id
 
     return source["name"]
