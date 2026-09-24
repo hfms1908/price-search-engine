@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 
 SOURCES = {
     "magazineluiza": {
-        "name": "Mgazine Luiza",
+        "name": "Magazine Luiza",
         "seed": "https://www.magazineluiza.com.br/busca/smartphone/",
         "domain": "magazineluiza.com.br",
     },

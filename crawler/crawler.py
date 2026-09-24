@@ -5,30 +5,27 @@ from collections import deque
 from urllib.parse import urljoin, urldefrag, urlparse
 from urllib.robotparser import RobotFileParser
 
+from fake_useragent import UserAgent
+
+ua = UserAgent(platforms=["windows"], browsers=["chrome"])
+user_agent = ua.random
+
 import requests
 
 from bs4 import BeautifulSoup
 
 from crawler.stats import CrawlStats, StopReason
-from crawler.storage import (
-    save_document,
-    document_exists,
-    StorageError,
-    get_storage_size,
-)
-
+from crawler.storage import save_document, StorageError
 from crawler.seeds import (
     SEED_URLS,
     ALLOWED_DOMAINS,
     get_source,
 )
-
 from crawler.filters import (
     should_crawl,
     is_allowed_content_type,
     is_blocked_page,
 )
-
 from crawler.config import (
     MAX_DOCUMENTS,
     MAX_STORAGE_GB,
@@ -39,9 +36,6 @@ from crawler.config import (
     MAX_RETRIES,
     RETRY_DELAY_SECONDS,
     RESPECT_ROBOTS_TXT,
-    REQUEST_HEADERS,
-    CollectionMode,
-    COLLECTION_MODE,
 )
 
 
@@ -129,8 +123,6 @@ def can_fetch(url: str, robots_cache: dict[str, RobotFileParser]) -> bool:
 
     parser = get_robot_parser(url, robots_cache)
 
-    user_agent = REQUEST_HEADERS.get("User-Agent", "*")
-
     return parser.can_fetch(user_agent, url)
 
 
@@ -195,8 +187,8 @@ def add_links_to_queues(
         source_queue.append(link)
         queued_urls.add(link)
 
-        # Se a fonte estava sem URLs e não está
-        # participando da rotação, reinsere a fonte.
+        # A fonte pode ter saído da rotação ao retirar sua última URL.
+        # Se novos links foram descobertos, ela volta a participar.
         if (was_empty and source_id not in source_rotation):
             source_rotation.append(source_id)
 
@@ -220,7 +212,8 @@ def get_next_url(
 
         url = source_queue.popleft()
 
-        # Se ainda existem URLs nessa fonte, ela volta para o final da rotação.
+        # A fonte permanece na rotação apenas se ainda tiver URLs.
+        # Se esta era a única URL, fetch_url ainda poderá realizar retries.
         if source_queue:
             source_rotation.append(source_id)
 
@@ -262,16 +255,6 @@ def request_handler(
         )
         return []
 
-    already_collected = document_exists(url)
-
-    skip_storage = (
-        COLLECTION_MODE == CollectionMode.INCREMENTAL
-        and already_collected
-    )
-
-    if skip_storage:
-        logger.info(f"Documento já coletado. Armazenamento ignorado: {url}")
-
     encoding = get_encoding(response)
 
     try:
@@ -293,38 +276,28 @@ def request_handler(
         logger.warning(f"Página de proteção/bloqueio detectada: {url}")
         return []
 
-    # Armazena apenas quando necessário.
-    if not skip_storage:
-
-        if stats.should_stop():
-            return []
-
-        try:
-            metadata = save_document(
-                url=url,
-                html=html,
-                encoding=encoding,
-                content_type=content_type,
-                status_code=response.status_code,
-            )
-
-        except StorageError as error:
-            stats.register_storage_error()
-            logger.error(str(error))
-            raise
-
-        if already_collected:
-            stats.register_updated_document(url, metadata["size_bytes"])
-
-        else:
-            stats.register_document(url, metadata["size_bytes"])
-
-        logger.info(
-            f"Documento salvo: "
-            f"{metadata['html_file']} "
-            f"({stats.documents_added}/"
-            f"{MAX_DOCUMENTS})"
+    try:
+        metadata = save_document(
+            url=url,
+            html=html,
+            encoding=encoding,
+            content_type=content_type,
+            status_code=response.status_code,
         )
+
+    except StorageError as error:
+        stats.register_storage_error()
+        logger.error(str(error))
+        raise
+
+    stats.register_document(url, metadata["size_bytes"])
+
+    logger.info(
+        f"Documento salvo: "
+        f"{metadata['html_file']} "
+        f"({stats.documents_added}/"
+        f"{MAX_DOCUMENTS})"
+    )
 
     # Verifica novamente os limites antes de extrair os links.
     if stats.should_stop():
@@ -348,9 +321,16 @@ def request_handler(
     return filtered_links
 
 
-def fetch_url(session: requests.Session, url: str) -> requests.Response | None:
+def fetch_url(
+        session: requests.Session,
+        url: str,
+        allow_retry: bool = False,
+) -> requests.Response | None:
+    """Faz a requisição e repete a mesma URL em caso de falha temporária."""
 
-    for attempt in range(MAX_RETRIES + 1):
+    max_attempts = MAX_RETRIES + 1 if allow_retry else 1
+
+    for attempt in range(max_attempts):
 
         try:
             response = session.get(url, timeout=REQUEST_TIMEOUT)
@@ -358,27 +338,20 @@ def fetch_url(session: requests.Session, url: str) -> requests.Response | None:
         except requests.RequestException as error:
             logger.warning(f"Erro ao acessar {url}: {error}")
 
-            if attempt < MAX_RETRIES:
+            if attempt < max_attempts:
+                logger.info(f"Retry {attempt + 1}/{MAX_RETRIES}: {url}")
                 time.sleep(RETRY_DELAY_SECONDS)
                 continue
 
             return None
 
-        if response.status_code in {
-            429,
-            500,
-            502,
-            503,
-            504,
-        }:
+        if response.status_code in {429, 500, 502, 503, 504}:
             logger.warning(
-                f"HTTP {response.status_code} "
-                f"em {url}. "
-                f"Tentativa {attempt + 1}/"
-                f"{MAX_RETRIES + 1}"
+                f"HTTP {response.status_code} em {url}. "
+                f"Tentativa {attempt + 1}/{MAX_RETRIES + 1}"
             )
 
-            if attempt < MAX_RETRIES:
+            if attempt < max_attempts - 1:
                 time.sleep(RETRY_DELAY_SECONDS)
                 continue
 
@@ -397,24 +370,14 @@ def fetch_url(session: requests.Session, url: str) -> requests.Response | None:
 
 def main() -> None:
 
-    # Tamanho em bytes dos documetnos já armazeanados.
-    initial_storage_bytes = get_storage_size()
-
     stats = CrawlStats(
         max_documents=MAX_DOCUMENTS,
         max_storage_bytes=(MAX_STORAGE_GB * (1024 ** 3)),
         max_execution_seconds=(MAX_EXECUTION_HOURS* 3600),
-        initial_storage_bytes=(initial_storage_bytes),
     )
 
-    # Verifica se algum limite já foi atingido antes da coleta.
-    if stats.should_stop():
-        print(stats.summary())
-        return
-
     session = requests.Session()
-
-    # session.headers.update(REQUEST_HEADERS)
+    session.headers.update({"User-Agent": user_agent})
 
     # Fronteira de URLs.
     source_queues = create_source_queues(SEED_URLS)
@@ -432,7 +395,7 @@ def main() -> None:
 
     start_time = time.monotonic()
 
-    # Momento da última requisição de cada fonte.
+    # Momento da última requisição realizada em cada fonte.
     last_request_time: dict[str, float] = {}
 
     while source_rotation:
@@ -464,11 +427,8 @@ def main() -> None:
             continue
 
         if not can_fetch(url, robots_cache):
-            logger.info(f"URL bloqueada pelo robots.txt: {url}"
-            )
+            logger.info(f"URL bloqueada pelo robots.txt: {url}")
             continue
-
-        # logger.info(f"Fonte selecionada: {source_id}")
 
         last_request = last_request_time.get(source_id)
 
@@ -480,8 +440,13 @@ def main() -> None:
             if remaining_delay > 0:
                 time.sleep(remaining_delay)
 
+        # Se URL retirada for a última disponível na fila e requsição falhar,
+        # então não haverá descoberta de novos links. Para mitigar esse risco,
+        # realiza retry nesta condição.
+        allow_retry = not source_queues[source_id]
+
         try:
-            response = fetch_url(session, url)
+            response = fetch_url(session=session, url=url, allow_retry=allow_retry)
 
             last_request_time[source_id] = time.monotonic()
 
