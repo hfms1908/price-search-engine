@@ -225,8 +225,7 @@ __marimo__/
 .streamlit/secrets.toml
 
 # Dados coletados
-data/raw/*
-data/raw.old/*
+data/raw*
 data/processed/*
 data/index/*
 data/logs/*

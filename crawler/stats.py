@@ -147,9 +147,9 @@ class CrawlStats:
         lines.append("Links por fonte:")
         lines.append(
             f"  {'Fonte':<35}"
-            f"{'Descobertos':>12}"
-            f"{'Aceitos':>10}"
-            f"{'Rejeitados':>12}"
+            f"{'Descobertos':>15}"
+            f"{'Aceitos':>13}"
+            f"{'Rejeitados':>15}"
         )
         
         all_sourd_ids = (
@@ -175,8 +175,8 @@ class CrawlStats:
         if self.http_errors:
             for status_code, count in sorted(self.http_errors.items()):
                 lines.append(
-                    f"  HTTP {status_code:>6}"
-                    f"{count:>10}"
+                    f"  HTTP {status_code:}"
+                    f"  {count:>10}"
                     f"  {self.status_code_string(status_code)}"
                 )
         else:
