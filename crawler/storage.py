@@ -13,7 +13,7 @@ class StorageError(Exception):
 
 def generate_document_id(url: str) -> str:
     """Gera um identificador baseado na URL."""
-    return hashlib.sha256(url.encode("utf-8")).hexdigest()[:32]
+    return hashlib.sha256(url.encode("utf-8")).hexdigest()
 
 
 def save_document(

@@ -226,6 +226,7 @@ __marimo__/
 
 # Dados coletados
 data/raw/*
+data/raw.old/*
 data/processed/*
 data/index/*
 data/logs/*

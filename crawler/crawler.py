@@ -5,11 +5,6 @@ from collections import deque
 from urllib.parse import urljoin, urldefrag, urlparse
 from urllib.robotparser import RobotFileParser
 
-from fake_useragent import UserAgent
-
-ua = UserAgent(platforms=["windows"], browsers=["chrome"])
-user_agent = ua.random
-
 import requests
 
 from bs4 import BeautifulSoup
@@ -36,6 +31,7 @@ from crawler.config import (
     MAX_RETRIES,
     RETRY_DELAY_SECONDS,
     RESPECT_ROBOTS_TXT,
+    REQUEST_HEADERS,
 )
 
 
@@ -120,6 +116,8 @@ def can_fetch(url: str, robots_cache: dict[str, RobotFileParser]) -> bool:
 
     if not RESPECT_ROBOTS_TXT:
         return True
+
+    user_agent = REQUEST_HEADERS.get("User-Agent", "*")
 
     parser = get_robot_parser(url, robots_cache)
 
@@ -324,6 +322,7 @@ def request_handler(
 def fetch_url(
         session: requests.Session,
         url: str,
+        stats: CrawlStats,
         allow_retry: bool = False,
 ) -> requests.Response | None:
     """Faz a requisição e repete a mesma URL em caso de falha temporária."""
@@ -344,6 +343,9 @@ def fetch_url(
                 continue
 
             return None
+
+        if response.status_code >= 400:
+            stats.register_http_error(response.status_code)
 
         if response.status_code in {429, 500, 502, 503, 504}:
             logger.warning(
@@ -377,7 +379,7 @@ def main() -> None:
     )
 
     session = requests.Session()
-    session.headers.update({"User-Agent": user_agent})
+    session.headers.update(REQUEST_HEADERS)
 
     # Fronteira de URLs.
     source_queues = create_source_queues(SEED_URLS)
@@ -446,7 +448,12 @@ def main() -> None:
         allow_retry = not source_queues[source_id]
 
         try:
-            response = fetch_url(session=session, url=url, allow_retry=allow_retry)
+            response = fetch_url(
+                session=session,
+                url=url,
+                stats=stats,
+                allow_retry=allow_retry,
+            )
 
             last_request_time[source_id] = time.monotonic()
 

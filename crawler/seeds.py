@@ -86,6 +86,56 @@ SOURCES = {
         ),
         "domain": "oficinadosbits.com.br",
     },
+    "zoom": {
+        "name": "Zoom (Comparador)",
+        "seed": "https://www.zoom.com.br/celular",
+        "domain": "zoom.com.br",
+    },
+    "buscape": {
+        "name": "Buscapé (Comparador)",
+        "seed": "https://www.buscape.com.br/celular",
+        "domain": "buscape.com.br",
+    },
+    "kalunga": {
+        "name": "Kalunga",
+        "seed": "https://www.kalunga.com.br/depto/telefonia/8",
+        "domain": "kalunga.com.br",
+    },
+    "bemol": {
+        "name": "Bemol",
+        "seed": "https://www.bemol.com.br/celular-e-smartphone",
+        "domain": "bemol.com.br",
+    },
+    "havan": {
+        "name": "Havan",
+        "seed": "https://www.havan.com.br/celulares-e-smartphones/",
+        "domain": "havan.com.br",
+    },
+    "colombo": {
+        "name": "Lojas Colombo",
+        "seed": "https://www.colombo.com.br/produto/Smartphone-e-Celular",
+        "domain": "colombo.com.br",
+    },
+    "shopee": {
+        "name": "Shopee",
+        "seed": "https://shopee.com.br/search?keyword=smartphone",
+        "domain": "shopee.com.br",
+    },
+    "taqui": {
+        "name": "taQi e mais",
+        "seed": "https://www.taqi.com.br/telefones-e-celulares/celular-smartphone/cat50004",
+        "domain": "taqi.com.br",
+    },
+    "casaevideo": {
+        "name": "Casa & Vídeo",
+        "seed": "https://www.casaevideo.com.br/telefones-e-celulares",
+        "domain": "casaevideo.com.br",
+    },
+    "motorola": {
+        "name": "Motorola",
+        "seed": "https://www.motorola.com.br/smartphones",
+        "domain": "motorola.com.br",
+    },
 }
 
 SEED_URLS = [

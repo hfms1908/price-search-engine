@@ -5,6 +5,8 @@ from enum import Enum, auto
 
 from crawler.seeds import get_source, get_source_name
 
+from requests import status_codes
+
 
 class StopReason(Enum):
     NONE = auto()
@@ -114,9 +116,12 @@ class CrawlStats:
     def elapsed_hours(self) -> float:
         return self.elapsed_seconds() / 3600
 
+    def status_code_string(self, code) -> str:
+        return status_codes._codes[code][0]
+
     def summary(self) -> str:
         lines = [
-            "\n=========================== RESUMO DA COLETA ===========================",
+            "\n=============================== RESUMO DA COLETA ===============================",
             f"Requisições processadas: {self.requests_processed}",
             f"Documentos adicionados.: {self.documents_added}",
             f"Erros de armazenamento.: {self.storage_errors}",
@@ -157,9 +162,9 @@ class CrawlStats:
             for source_id in sorted(all_sourd_ids):
                 lines.append(
                     f"  {get_source_name(source_id):<35}"
-                    f"{self.links_discovered_by_source.get(source_id, 0):>12}"
-                    f"{self.links_accepted_by_source.get(source_id, 0):>10}"
-                    f"{self.links_rejected_by_source.get(source_id, 0):>12}"
+                    f"{self.links_discovered_by_source.get(source_id, 0):>15}"
+                    f"{self.links_accepted_by_source.get(source_id, 0):>13}"
+                    f"{self.links_rejected_by_source.get(source_id, 0):>15}"
                 )
         else:
             lines.append("  Nenhum link registrado.")
@@ -169,9 +174,13 @@ class CrawlStats:
 
         if self.http_errors:
             for status_code, count in sorted(self.http_errors.items()):
-                lines.append(f"  HTTP {status_code:<3} {count:>6}")
+                lines.append(
+                    f"  HTTP {status_code:>6}"
+                    f"{count:>10}"
+                    f"  {self.status_code_string(status_code)}"
+                )
         else:
             lines.append("  Nenhum erro HTTP registrado.")
 
-        lines.append("========================================================================")
+        lines.append("=================================================================================")
         return "\n".join(lines)

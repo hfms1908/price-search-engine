@@ -8,7 +8,6 @@ charset-normalizer==3.5.1
 colorama==0.4.6
 cssselect==1.5.0
 Django==6.1.1
-fake-useragent==2.2.0
 filelock==4.0.1
 idna==3.20
 impit==0.14.1
