@@ -17,8 +17,7 @@ SOURCES = {
     "fastshop": {
         "name": "Fast Shop",
         "seed": (
-            "https://site.fastshop.com.br/"
-            "celular-tablet-e-smartwatch/celular-e-smartphone"
+            "https://site.fastshop.com.br/celular-tablet-e-smartwatch/celular-e-smartphone"
         ),
         "domain": "fastshop.com.br",
     },
@@ -35,25 +34,21 @@ SOURCES = {
     "extra": {
         "name": "Extra",
         "seed": (
-            "https://www.extra.com.br/"
-            "c/telefones-e-celulares/smartphones?filtro=c38_c326"
+            "https://www.extra.com.br/c/telefones-e-celulares/smartphones?filtro=c38_c326"
         ),
         "domain": "extra.com.br",
     },
     "casasbahia": {
         "name": "Casas Bahia",
         "seed": (
-            "https://www.casasbahia.com.br/"
-            "c/telefones-e-celulares?filtro=categoria-c38_c326"
+            "https://www.casasbahia.com.br/c/telefones-e-celulares?filtro=categoria-c38_c326"
         ),
         "domain": "casasbahia.com.br",
     },
     "amazon": {
         "name": "Amazon",
         "seed": (
-            "https://www.amazon.com.br/"
-            "gp/browse.html?node=16243890011"
-            "&ref_=nav_em__wireless_smartphones_0_2_16_3"
+            "https://www.amazon.com.br/gp/browse.html?node=16243890011&ref_=nav_em__wireless_smartphones_0_2_16_3"
         ),
         "domain": "amazon.com.br",
     },
@@ -65,24 +60,21 @@ SOURCES = {
     "pontofrio": {
         "name": "Ponto Frio",
         "seed": (
-            "https://www.pontofrio.com.br/"
-            "c/telefones-e-celulares/smartphones?filtro=categoria-c38_c326"
+            "https://www.pontofrio.com.br/c/telefones-e-celulares/smartphones?filtro=categoria-c38_c326"
         ),
         "domain": "pontofrio.com.br",
     },
     "carrefour": {
         "name": "Carrefour",
         "seed": (
-            "https://www.carrefour.com.br/"
-            "categoria/celulares-smartphones-e-smartwatches"
+            "https://www.carrefour.com.br/categoria/celulares-smartphones-e-smartwatches"
         ),
         "domain": "carrefour.com.br",
     },
     "oficinadosbits": {
         "name": "Oficina dos Bits",
         "seed": (
-            "https://www.oficinadosbits.com.br/"
-            "categoria/celulares-e-comunicacao-smartphone/"
+            "https://www.oficinadosbits.com.br/categoria/celulares-e-comunicacao-smartphone/"
         ),
         "domain": "oficinadosbits.com.br",
     },
