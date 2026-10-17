@@ -1,6 +1,6 @@
 from pathlib import Path
 
-RAW_DIR = Path('data/raw.250')
+RAW_DIR = Path('data/raw')
 PROCESSED_DIR = Path('data/processed')
 MIN_TEXT_LENGTH = 40
 
