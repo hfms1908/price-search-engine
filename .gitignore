@@ -226,9 +226,9 @@ __marimo__/
 
 # Dados coletados
 data/raw*
-data/processed/*
-data/index/*
-data/logs/*
+data/processed*
+data/index*
+data/logs*
 
 # Manter diretórios
 !data/raw/.gitkeep
