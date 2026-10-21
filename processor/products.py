@@ -99,8 +99,10 @@ def extract_products(html: str, page_url: str, page_title: str = '', cleaned_tex
     found = []
     
     for script in scripts_soup.find_all('script', type=re.compile(r'ld\+json',re.I)):
-        try: data=json.loads(script.string or script.get_text())
-        except (ValueError, TypeError): continue
+        try:
+            data = json.loads(script.string or script.get_text())
+        except (ValueError, TypeError):
+            continue
         
         for obj in _walk_json(data):
             link = obj.get('url') or page_url
