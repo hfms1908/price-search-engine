@@ -106,6 +106,7 @@ def print_report(stats):
     print('\n' + '=' * 52)
     print('RELATÓRIO DE INDEXAÇÃO')
     print('=' * 52)
+
     for label, key in (
         ('JSONs processados lidos', 'documents_read'),
         ('Produtos indexados', 'products_indexed'),
@@ -117,9 +118,11 @@ def print_report(stats):
         ('Produtos/segundo', 'products_per_second'),
     ):
         print(f'{label + ":":30} {stats[key]}')
+    
     print('-' * 52)
     for field, missing in stats.get('missing_attributes', {}).items():
         print(f'{"Sem " + field + ":":30} {missing}')
+    
     print('=' * 52)
 
 if __name__ == '__main__':
