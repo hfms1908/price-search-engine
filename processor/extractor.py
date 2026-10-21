@@ -46,9 +46,11 @@ def extract_attributes(title: str, text: str = '', url: str = '') -> dict:
     # indica armazenamento. Não inferir 16GB/32GB nem capacidades em MB.
     # Somente o nome da oferta é usado para evitar dados de outros produtos.
     if ram is None:
-        capacities = [_gb(m.group('num'), m.group('unit'))
-                      for m in CAPACITY.finditer(name)
-                      if m.group('unit').lower() == 'gb']
+        capacities = [
+            _gb(m.group('num'), m.group('unit'))
+            for m in CAPACITY.finditer(name)
+            if m.group('unit').lower() == 'gb'
+        ]
         
         ram_candidates = [v for v in capacities if v in (4, 6, 8, 12)]
         if ram_candidates:
