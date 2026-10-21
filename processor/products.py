@@ -32,12 +32,16 @@ def _price_from_offers(offers):
         for item in offers:
             value = _price_from_offers(item)
             if value is not None: return value
+    
     if isinstance(offers, dict):
         if str(offers.get('priceCurrency','BRL')).upper() != 'BRL': return None
+        
         for key in ('price', 'lowPrice'):
             value = parse_price(offers.get(key))
             if value is not None: return value
+        
         return _price_from_offers(offers.get('priceSpecification'))
+    
     return None
 
 
@@ -66,8 +70,14 @@ def _product(name, description, url, price=None, source='html'):
     
     attrs['price_brl'] = price
     
-    return {'name':name, 'category':classification['category'], 'url':url,
-            'attributes':attrs, 'text':f'{name} {description}'.strip(), 'extraction_source':source}
+    return {
+        'name': name,
+        'category': classification['category'],
+        'url': url,
+        'attributes': attrs,
+        'text':f'{name} {description}'.strip(),
+        'extraction_source':source
+    }
 
 
 def _node_price(node):
@@ -105,7 +115,7 @@ def extract_products(html: str, page_url: str, page_title: str = '', cleaned_tex
             name = obj.get('name','')
             if brand and str(brand).casefold() not in str(name).casefold(): name = f'{brand} {name}'
             
-            p=_product(name,description,urljoin(page_url,str(link)),_price_from_offers(obj.get('offers')),'json_ld')
+            p = _product(name,description,urljoin(page_url,str(link)),_price_from_offers(obj.get('offers')),'json_ld')
             if p: found.append(p)
     
     # Completa preços ausentes somente por correspondência exata de URL do cartão.
@@ -179,6 +189,7 @@ def extract_products(html: str, page_url: str, page_title: str = '', cleaned_tex
             unique[key] = p
     
     return list(unique.values())
+
 
 def product_id(document_id, product):
     return hashlib.sha256(f"{document_id}|{product['url']}|{product['name'].casefold()}".encode()).hexdigest()

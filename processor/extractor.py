@@ -108,6 +108,7 @@ def extract_attributes(title: str, text: str = '', url: str = '') -> dict:
     
     return attributes
 
+
 def parse_price(value):
     """Converte preços monetários; recusa strings com parcelas e unidades."""
     if isinstance(value, (int, float)) and not isinstance(value, bool):
