@@ -14,18 +14,24 @@ def classify_document(title: str, text: str, url: str = '') -> dict:
     """Classifica com prioridade ao título; texto genérico sozinho não basta."""
     title = title or ''
     text = text or ''
+    
     path = urlparse(url).path
+    
     title_category = CATEGORY.search(title)
     title_model = MODEL.search(title)
     title_brand = BRAND.search(title)
     title_excluded = EXCLUDED.search(title)
     path_category = CATEGORY.search(path.replace('-', ' '))
+    
     if title_excluded and not title_category and not title_model:
         return {'relevant': False, 'category': None, 'reason': 'titulo_fora_do_escopo'}
+    
     relevant = bool(title_category or title_model or (path_category and title_brand))
     if not relevant:
         return {'relevant': False, 'category': None, 'reason': 'sem_evidencia_no_titulo_ou_url'}
+    
     evidence = ' '.join([title, path.replace('-', ' ')])
     is_tablet = bool(re.search(r'\b(tablets?|ipads?|galaxy\s+tab)\b', evidence, re.I))
     category = 'tablet' if is_tablet else 'smartphone'
+    
     return {'relevant': True, 'category': category, 'reason': 'titulo_ou_url'}
