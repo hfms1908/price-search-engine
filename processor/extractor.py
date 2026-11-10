@@ -4,7 +4,7 @@ import html as html_lib
 from bs4 import BeautifulSoup
 from urllib.parse import unquote, urlparse
 from processor.config import BRANDS, MODEL_PATTERNS
-from processor.normalizer import normalize_capacities, normalize_capacity_value
+from processor.normalizer import normalize_capacities
 
 MODEL_PATTERN = re.compile(r'\b(?:' + '|'.join(MODEL_PATTERNS.values()) + r')\b', re.I)
 CAPACITY = re.compile(r'(?<![\w])(?P<num>\d+(?:[.,]\d+)?)\s*(?P<unit>GB|TB|MB)\b', re.I)
@@ -12,23 +12,15 @@ RAM = re.compile(r'(?<![\w])(\d+(?:[.,]\d+)?)\s*(GB|TB|MB)\s*(?:de\s*)?(?:ram|me
 STORAGE = re.compile(r'(?<![\w])(\d+(?:[.,]\d+)?)\s*(GB|TB)\s*(?:de\s*)?(?:armazenamento|mem[oó]ria\s+interna|rom)\b|\b(?:armazenamento|mem[oó]ria\s+interna|rom)\s*(?:de\s*)?(\d+(?:[.,]\d+)?)\s*(GB|TB)\b', re.I)
 PRICE = re.compile(r'R\$\s*(\d{1,3}(?:\.\d{3})*,\d{2}|\d+,\d{2})')
 
-
 def _gb(value, unit):
-    value = normalize_capacity_value(value)
-    amount = float(value)
-    
-    factor = { 'mb': 1 / 1024, 'gb': 1, 'tb': 1024 }
-    
-    return round(amount * factor[unit.lower()], 3)
-
+    amount = float(value.replace(',','.'))
+    return round(amount*{'mb':1/1024,'gb':1,'tb':1024}[unit.lower()],3)
 
 def _match_capacity(match):
     return _gb(match.group(1) or match.group(3),match.group(2) or match.group(4)) if match else None
 
-
 def _clean(value):
     return normalize_capacities(html_lib.unescape(BeautifulSoup(str(value or ''),'html.parser').get_text(' ',strip=True)))
-
 
 def extract_attributes(title: str, text: str = '', url: str = '') -> dict:
     name = _clean(title)

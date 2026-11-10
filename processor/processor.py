@@ -10,7 +10,7 @@ from pathlib import Path
 from processor.cleaner import clean_html
 from processor.products import extract_products, product_id
 from processor.config import RAW_DIR, PROCESSED_DIR, MAX_WORKERS, CHUNK_SIZE
-from processor.normalizer import normalize_capacities, normalize_capacities
+from processor.normalizer import normalize_capacities
 
 logger = logging.getLogger(__name__)
 COUNTERS = ('read', 'processed', 'products', 'skipped', 'irrelevant', 'errors')
