@@ -14,7 +14,14 @@ PRICE = re.compile(r'R\$\s*(\d{1,3}(?:\.\d{3})*,\d{2}|\d+,\d{2})')
 
 def _gb(value, unit):
     amount = float(value.replace(',','.'))
-    return round(amount*{'mb':1/1024,'gb':1,'tb':1024}[unit.lower()],3)
+    
+    factor = {
+        'mb': 1 / 1024,
+        'gb': 1,
+        'tb': 1024
+    }
+    
+    return round(amount * factor[unit.lower()], 3)
 
 def _match_capacity(match):
     return _gb(match.group(1) or match.group(3),match.group(2) or match.group(4)) if match else None
