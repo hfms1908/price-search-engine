@@ -1,0 +1,317 @@
+{
+  "1": {
+    "document_id": "000745792f51f987d15ce3c4286a5371fe90e6c9ba12c479cda87c0d09c17f3c",
+    "collected_at": "2026-09-26T00:25:42.997355",
+    "name": "iPhone 16 128gb",
+    "category": "smartphone",
+    "url": "https://www.zoom.com.br/celular/smartphone-apple-iphone-16-128gb-camera-dupla?_lc=88&experiencevariant=cro-12-2&searchterm=iphone%2B16",
+    "attributes": {
+      "brand": "Apple",
+      "model": "iPhone 16",
+      "ram_gb": null,
+      "storage_gb": 128.0,
+      "price_brl": 4599.0
+    },
+    "extraction_source": "html_card"
+  },
+  "2": {
+    "document_id": "000745792f51f987d15ce3c4286a5371fe90e6c9ba12c479cda87c0d09c17f3c",
+    "collected_at": "2026-09-26T00:25:42.997355",
+    "name": "iPhone 16 Plus 128gb",
+    "category": "smartphone",
+    "url": "https://www.zoom.com.br/celular/smartphone-apple-iphone-16-plus-128gb-camera-dupla?_lc=88&experiencevariant=cro-12-2&searchterm=iphone%2B16",
+    "attributes": {
+      "brand": "Apple",
+      "model": "iPhone 16 Plus",
+      "ram_gb": null,
+      "storage_gb": 128.0,
+      "price_brl": 6299.99
+    },
+    "extraction_source": "html_card"
+  },
+  "3": {
+    "document_id": "000745792f51f987d15ce3c4286a5371fe90e6c9ba12c479cda87c0d09c17f3c",
+    "collected_at": "2026-09-26T00:25:42.997355",
+    "name": "iPhone 16 Plus 256gb",
+    "category": "smartphone",
+    "url": "https://www.zoom.com.br/celular/smartphone-apple-iphone-16-plus-256gb?_lc=88&experiencevariant=cro-12-2&searchterm=iphone%2B16",
+    "attributes": {
+      "brand": "Apple",
+      "model": "iPhone 16 Plus",
+      "ram_gb": null,
+      "storage_gb": 256.0,
+      "price_brl": 7299.1
+    },
+    "extraction_source": "html_card"
+  },
+  "4": {
+    "document_id": "000d23f330870baaf6a33b266d47f2f59cf54aac095564e327749f1ccdf660b0",
+    "collected_at": "2026-09-26T12:08:19.226011",
+    "name": "Tablet Xiaomi Pad 7 128gb 8gb 11,2\" 13 MP",
+    "category": "tablet",
+    "url": "https://www.buscape.com.br/tablet-ipad/tablet-xiaomi-pad-7-128gb-8-gb-11-2-android-13-mp-filma-em-4k?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Xiaomi",
+      "model": null,
+      "ram_gb": 8.0,
+      "storage_gb": 128.0,
+      "price_brl": 1343.77
+    },
+    "extraction_source": "html_card"
+  },
+  "5": {
+    "document_id": "000d23f330870baaf6a33b266d47f2f59cf54aac095564e327749f1ccdf660b0",
+    "collected_at": "2026-09-26T12:08:19.226011",
+    "name": "iPad 11ª Geração Apple A16 128gb 11\" iPadOS 18",
+    "category": "tablet",
+    "url": "https://www.buscape.com.br/tablet-ipad/tablet-apple-ipad-11-geracao-11-128gb-11-ipados-12-mp?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Apple",
+      "model": "iPad",
+      "ram_gb": null,
+      "storage_gb": 128.0,
+      "price_brl": 2969.0
+    },
+    "extraction_source": "html_card"
+  },
+  "6": {
+    "document_id": "000d23f330870baaf6a33b266d47f2f59cf54aac095564e327749f1ccdf660b0",
+    "collected_at": "2026-09-26T12:08:19.226011",
+    "name": "Tablet Samsung Galaxy Tab S10 FE Plus 128gb 8gb SM-X620NZ 13,1\" 13 MP",
+    "category": "tablet",
+    "url": "https://www.buscape.com.br/tablet-ipad/tablet-samsung-galaxy-sm-x620nz-128gb-13-android-13-mp-filma-em-4k?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Samsung",
+      "model": "Galaxy Tab S10",
+      "ram_gb": 8.0,
+      "storage_gb": 128.0,
+      "price_brl": 2859.12
+    },
+    "extraction_source": "html_card"
+  },
+  "8": {
+    "document_id": "000d23f330870baaf6a33b266d47f2f59cf54aac095564e327749f1ccdf660b0",
+    "collected_at": "2026-09-26T12:08:19.226011",
+    "name": "Tablet Samsung Galaxy Tab S10 Lite 10,9\" Wi-Fi 256gb 8gb SM-X400N",
+    "category": "tablet",
+    "url": "https://www.buscape.com.br/tablet-ipad/tablet-samsung-galaxy-tab-s10-lite-256gb-8-gb-sm-x400n-10-9-android-mp?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Samsung",
+      "model": "Galaxy Tab S10",
+      "ram_gb": 8.0,
+      "storage_gb": 256.0,
+      "price_brl": 2375.12
+    },
+    "extraction_source": "html_card"
+  },
+  "129": {
+    "document_id": "00edbc5435f47d4f28e97e058c69619141a7a0ff1a222215c89eb3db5212ee38",
+    "collected_at": "2026-09-26T01:24:02.914125",
+    "name": "Celular Samsung Galaxy S25 Plus 5G 256gb 12gb",
+    "category": "smartphone",
+    "url": "https://www.zoom.com.br/celular/celular-samsung-galaxy-s25-plus-5g-256gb-12-gb?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Samsung",
+      "model": "Galaxy S25 Plus",
+      "ram_gb": 12.0,
+      "storage_gb": 256.0,
+      "price_brl": 3909.84
+    },
+    "extraction_source": "html_card"
+  },
+  "131": {
+    "document_id": "00edbc5435f47d4f28e97e058c69619141a7a0ff1a222215c89eb3db5212ee38",
+    "collected_at": "2026-09-26T01:24:02.914125",
+    "name": "Celular Samsung Galaxy S25 Plus 5G 512gb 12gb",
+    "category": "smartphone",
+    "url": "https://www.zoom.com.br/celular/celular-samsung-galaxy-s25-plus-5g-512gb-12-gb?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Samsung",
+      "model": "Galaxy S25 Plus",
+      "ram_gb": 12.0,
+      "storage_gb": 512.0,
+      "price_brl": 4311.12
+    },
+    "extraction_source": "html_card"
+  },
+  "136": {
+    "document_id": "00edbc5435f47d4f28e97e058c69619141a7a0ff1a222215c89eb3db5212ee38",
+    "collected_at": "2026-09-26T01:24:02.914125",
+    "name": "Celular Samsung Galaxy S25 Edge 5G 512gb 12gb",
+    "category": "smartphone",
+    "url": "https://www.zoom.com.br/celular/celular-samsung-galaxy-s25-edge-512gb-12-gb?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Samsung",
+      "model": "Galaxy S25",
+      "ram_gb": 12.0,
+      "storage_gb": 512.0,
+      "price_brl": 4017.55
+    },
+    "extraction_source": "html_card"
+  },
+  "500": {
+    "document_id": "04405e082d0217a40c5e4f01f6486a5444ba5a9d5746a803f8162112e8f189cc",
+    "collected_at": "2026-09-26T13:35:23.084949",
+    "name": "Tablet Samsung Galaxy Active 5 5G 128gb 6gb RAM",
+    "category": "tablet",
+    "url": "https://www.zoom.com.br/tablet-ipad/tablet-samsung-galaxy-128gb-5g-8-android-13-mp-filma-em-4k?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Samsung",
+      "model": null,
+      "ram_gb": 6.0,
+      "storage_gb": 128.0,
+      "price_brl": 3133.71
+    },
+    "extraction_source": "html_card"
+  },
+  "1000": {
+    "document_id": "086c6c9d01b028069fcd03892bd536dc281a4666bc91874424909c9de15bfdbb",
+    "collected_at": "2026-09-25T23:48:48.879376",
+    "name": "Celular Samsung Galaxy S24 Ultra 5G 256gb 12gb",
+    "category": "smartphone",
+    "url": "https://www.zoom.com.br/celular/smartphone-samsung-galaxy-s24-ultra-5g-256gb-camera-quadrupla?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Samsung",
+      "model": "Galaxy S24 Ultra",
+      "ram_gb": 12.0,
+      "storage_gb": 256.0,
+      "price_brl": 5399.0
+    },
+    "extraction_source": "html_card"
+  },
+  "1295": {
+    "document_id": "0b5c22213637d054c937c94dfd9762e9b88bb125d7365e8529a810a4fa07425e",
+    "collected_at": "2026-09-26T06:05:48.369773",
+    "name": "KDM Informática Carregador 20w Completo C- Cabo Para Moto G54",
+    "category": "smartphone",
+    "url": "https://https/carregador-20w-completo-c--cabo-para-moto-g54-4067684/p?skuId=3900183",
+    "attributes": {
+      "brand": null,
+      "model": "Moto G54",
+      "ram_gb": null,
+      "storage_gb": null,
+      "price_brl": 42.82
+    },
+    "extraction_source": "json_ld"
+  },
+  "14": {
+    "document_id": "000d23f330870baaf6a33b266d47f2f59cf54aac095564e327749f1ccdf660b0",
+    "collected_at": "2026-09-26T12:08:19.226011",
+    "name": "Tablet Xiaomi Redmi Pad2 Wi-Fi 128gb",
+    "category": "tablet",
+    "url": "https://www.buscape.com.br/tablet-ipad/tablet-xiaomi-redmi-pad-2-128gb-4-gb-pad2-11-8-mp?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Xiaomi",
+      "model": null,
+      "ram_gb": 4.0,
+      "storage_gb": 128.0,
+      "price_brl": 1266.69
+    },
+    "extraction_source": "html_card"
+  },
+  "20": {
+    "document_id": "000d23f330870baaf6a33b266d47f2f59cf54aac095564e327749f1ccdf660b0",
+    "collected_at": "2026-09-26T12:08:19.226011",
+    "name": "Tablet Samsung Galaxy Tab S9 256gb SM-X710N 11\" 13 MP",
+    "category": "tablet",
+    "url": "https://www.buscape.com.br/tablet-ipad/tablet-samsung-galaxy-tab-s9-sm-x710n-256gb-11-android-13-mp?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Samsung",
+      "model": "Galaxy Tab S9",
+      "ram_gb": null,
+      "storage_gb": 256.0,
+      "price_brl": 4999.0
+    },
+    "extraction_source": "html_card"
+  },
+  "29": {
+    "document_id": "001d20dadb03cbcaa23a67110a07175b47ae3ce3d44a0ed929c125dfd265d30c",
+    "collected_at": "2026-09-25T23:18:46.971095",
+    "name": "Celular Samsung Galaxy A03 Core SM-A032M 32gb 2gb",
+    "category": "smartphone",
+    "url": "https://www.buscape.com.br/celular/smartphone-samsung-galaxy-a03-core-sm-a032m-32gb-android?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Samsung",
+      "model": "Galaxy A03",
+      "ram_gb": null,
+      "storage_gb": null,
+      "price_brl": 806.55
+    },
+    "extraction_source": "html_card"
+  },
+  "35": {
+    "document_id": "0038069ecc4d32f8a93e032dfafcadad4c7fffd324db9bb72e668d237e596d9a",
+    "collected_at": "2026-09-26T06:24:56.091920",
+    "name": "Tablet Tcl Tab 11 128gb 4gb Ram Wi-Fi 11\" - Cinza",
+    "category": "tablet",
+    "url": "https://www.havan.com.br/tablet-tcl-tab-11-128gb-4gb-ram-wi-fi-11-cinza/p",
+    "attributes": {
+      "brand": "TCL",
+      "model": null,
+      "ram_gb": 4.0,
+      "storage_gb": 128.0,
+      "price_brl": null
+    },
+    "extraction_source": "json_ld"
+  },
+  "56": {
+    "document_id": "00bbacda1ef891cd7c5d9c7a3c656dfb1f60a38791f9b65eced63a9055eb8dfe",
+    "collected_at": "2026-09-26T00:01:11.705344",
+    "name": "Celular Motorola Moto G35 5G 256gb 12gb",
+    "category": "smartphone",
+    "url": "https://www.buscape.com.br/celular/celular-motorola-moto-g35-5g-256gb-12-gb?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Motorola",
+      "model": "Moto G35",
+      "ram_gb": 12.0,
+      "storage_gb": 256.0,
+      "price_brl": 999.0
+    },
+    "extraction_source": "html_card"
+  },
+  "15": {
+    "document_id": "000d23f330870baaf6a33b266d47f2f59cf54aac095564e327749f1ccdf660b0",
+    "collected_at": "2026-09-26T12:08:19.226011",
+    "name": "Tablet Xiaomi Redmi Pad 2 Pro Wi-Fi 256gb",
+    "category": "tablet",
+    "url": "https://www.buscape.com.br/tablet-ipad/tablet-xiaomi-redmi-pad-2-pro-256gb-8-gb-12-1-8-mp?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Xiaomi",
+      "model": null,
+      "ram_gb": 8.0,
+      "storage_gb": 256.0,
+      "price_brl": 1999.0
+    },
+    "extraction_source": "html_card"
+  },
+  "202": {
+    "document_id": "01761232bd2cb414ff769ece1efb7ba10a7c733001081775303b0f6789f3e6ce",
+    "collected_at": "2026-09-26T01:18:00.145544",
+    "name": "Celular Samsung Galaxy S25 Ultra 5G 256gb 12gb",
+    "category": "smartphone",
+    "url": "https://www.buscape.com.br/celular/celular-samsung-galaxy-s25-ultra-5g-256gb-12-gb?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Samsung",
+      "model": "Galaxy S25 Ultra",
+      "ram_gb": 12.0,
+      "storage_gb": 256.0,
+      "price_brl": 5499.0
+    },
+    "extraction_source": "html_card"
+  },
+  "48": {
+    "document_id": "00bbacda1ef891cd7c5d9c7a3c656dfb1f60a38791f9b65eced63a9055eb8dfe",
+    "collected_at": "2026-09-26T00:01:11.705344",
+    "name": "iPhone 17 256gb",
+    "category": "smartphone",
+    "url": "https://www.buscape.com.br/celular/celular-apple-iphone-17-256gb?experiencevariant=cro-12-2&_lc=11",
+    "attributes": {
+      "brand": "Apple",
+      "model": "iPhone 17",
+      "ram_gb": null,
+      "storage_gb": 256.0,
+      "price_brl": 5799.0
+    },
+    "extraction_source": "html_card"
+  }
+}

@@ -1,0 +1,1190 @@
+{
+  "01492-21-13690": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "1": {
+    "6": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "10": {
+    "8": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "11": {
+    "4": {
+      "name": 1,
+      "text": 1
+    },
+    "5": {
+      "name": 1,
+      "text": 1
+    },
+    "20": {
+      "name": 1,
+      "text": 1
+    },
+    "35": {
+      "name": 2,
+      "text": 2
+    }
+  },
+  "11a": {
+    "5": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "128gb": {
+    "1": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "2": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "4": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "5": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "6": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "14": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "35": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "500": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    }
+  },
+  "12gb": {
+    "56": {
+      "name": 1,
+      "text": 1,
+      "ram_gb": 1
+    },
+    "129": {
+      "name": 1,
+      "text": 1,
+      "ram_gb": 1
+    },
+    "131": {
+      "name": 1,
+      "text": 1,
+      "ram_gb": 1
+    },
+    "136": {
+      "name": 1,
+      "text": 1,
+      "ram_gb": 1
+    },
+    "202": {
+      "name": 1,
+      "text": 1,
+      "ram_gb": 1
+    },
+    "1000": {
+      "name": 1,
+      "text": 1,
+      "ram_gb": 1
+    }
+  },
+  "13": {
+    "4": {
+      "name": 1,
+      "text": 1
+    },
+    "6": {
+      "name": 2,
+      "text": 2
+    },
+    "20": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "16": {
+    "1": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "2": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "3": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    }
+  },
+  "17": {
+    "48": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    }
+  },
+  "18": {
+    "5": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "2": {
+    "4": {
+      "name": 1,
+      "text": 1
+    },
+    "15": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "20w": {
+    "1295": {
+      "name": 1,
+      "text": 3
+    }
+  },
+  "256gb": {
+    "3": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "8": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "15": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "20": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "48": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "56": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "129": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "202": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "1000": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    }
+  },
+  "2gb": {
+    "29": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "32gb": {
+    "29": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "4gb": {
+    "14": {
+      "ram_gb": 1
+    },
+    "35": {
+      "name": 1,
+      "text": 1,
+      "ram_gb": 1
+    }
+  },
+  "5": {
+    "500": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "512gb": {
+    "131": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    },
+    "136": {
+      "name": 1,
+      "text": 1,
+      "storage_gb": 1
+    }
+  },
+  "5g": {
+    "56": {
+      "name": 1,
+      "text": 1
+    },
+    "129": {
+      "name": 1,
+      "text": 1
+    },
+    "131": {
+      "name": 1,
+      "text": 1
+    },
+    "136": {
+      "name": 1,
+      "text": 1
+    },
+    "202": {
+      "name": 1,
+      "text": 1
+    },
+    "500": {
+      "name": 1,
+      "text": 1
+    },
+    "1000": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "6gb": {
+    "500": {
+      "name": 1,
+      "text": 1,
+      "ram_gb": 1
+    }
+  },
+  "7": {
+    "4": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "8gb": {
+    "4": {
+      "name": 1,
+      "text": 1,
+      "ram_gb": 1
+    },
+    "6": {
+      "name": 1,
+      "text": 1,
+      "ram_gb": 1
+    },
+    "8": {
+      "name": 1,
+      "text": 1,
+      "ram_gb": 1
+    },
+    "15": {
+      "ram_gb": 1
+    }
+  },
+  "9": {
+    "8": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "a03": {
+    "29": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    }
+  },
+  "a16": {
+    "5": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "acompanha": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "active": {
+    "500": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "adicional": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "anuncio": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "apenas": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "apple": {
+    "1": {
+      "brand": 1
+    },
+    "2": {
+      "brand": 1
+    },
+    "3": {
+      "brand": 1
+    },
+    "5": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    },
+    "48": {
+      "brand": 1
+    }
+  },
+  "bastante": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "c": {
+    "1295": {
+      "name": 1,
+      "text": 2
+    }
+  },
+  "cabo": {
+    "1295": {
+      "name": 1,
+      "text": 4
+    }
+  },
+  "carregador": {
+    "1295": {
+      "name": 1,
+      "text": 4
+    }
+  },
+  "caso": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "celular": {
+    "29": {
+      "name": 1,
+      "text": 1
+    },
+    "56": {
+      "name": 1,
+      "text": 1
+    },
+    "129": {
+      "name": 1,
+      "text": 1
+    },
+    "131": {
+      "name": 1,
+      "text": 1
+    },
+    "136": {
+      "name": 1,
+      "text": 1
+    },
+    "202": {
+      "name": 1,
+      "text": 1
+    },
+    "1000": {
+      "name": 1,
+      "text": 1
+    },
+    "1295": {
+      "text": 1
+    }
+  },
+  "cinza": {
+    "35": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "compativel": {
+    "1295": {
+      "text": 2
+    }
+  },
+  "completo": {
+    "1295": {
+      "name": 1,
+      "text": 2
+    }
+  },
+  "configuracao": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "core": {
+    "29": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "desenvolvida": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "destacavel": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "edge": {
+    "136": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "ela": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "ele": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "entrega": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "envio": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "esse": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "fabricante": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "facilmente": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "fe": {
+    "6": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "fonte": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "funcionar": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "g35": {
+    "56": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    }
+  },
+  "g54": {
+    "1295": {
+      "name": 1,
+      "model": 1,
+      "text": 2
+    }
+  },
+  "galaxy": {
+    "6": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "8": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "20": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "29": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "129": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "131": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "136": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "202": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "500": {
+      "name": 1,
+      "text": 1
+    },
+    "1000": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    }
+  },
+  "geracao": {
+    "5": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "homologacao": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "imediato": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "informado": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "informatica": {
+    "1295": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "ipad": {
+    "5": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    }
+  },
+  "ipados": {
+    "5": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "iphone": {
+    "1": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "2": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "3": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "48": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    }
+  },
+  "ja": {
+    "1295": {
+      "text": 2
+    }
+  },
+  "juntamente": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "kdm": {
+    "1295": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "lite": {
+    "8": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "marca": {
+    "1295": {
+      "text": 2
+    }
+  },
+  "mas": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "mesma": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "mesmo": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "modelo": {
+    "1295": {
+      "text": 2
+    }
+  },
+  "moto": {
+    "56": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "1295": {
+      "name": 1,
+      "model": 1,
+      "text": 2
+    }
+  },
+  "motorola": {
+    "56": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    }
+  },
+  "mp": {
+    "4": {
+      "name": 1,
+      "text": 1
+    },
+    "6": {
+      "name": 1,
+      "text": 1
+    },
+    "20": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "muito": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "nao": {
+    "1295": {
+      "text": 2
+    }
+  },
+  "necessita": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "nenhum": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "nesse": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "ou": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "pad": {
+    "4": {
+      "name": 1,
+      "text": 1
+    },
+    "15": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "pad2": {
+    "14": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "perfeitamente": {
+    "1295": {
+      "text": 2
+    }
+  },
+  "plus": {
+    "2": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "3": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "6": {
+      "name": 1,
+      "text": 1
+    },
+    "129": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "131": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    }
+  },
+  "pode": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "postamos": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "pro": {
+    "15": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "produto": {
+    "1295": {
+      "text": 3
+    }
+  },
+  "pronta": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "pronto": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "qualidade": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "ram": {
+    "35": {
+      "name": 1,
+      "text": 1
+    },
+    "500": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "rapido": {
+    "1295": {
+      "text": 2
+    }
+  },
+  "redmi": {
+    "14": {
+      "name": 1,
+      "text": 1
+    },
+    "15": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "s10": {
+    "6": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "8": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    }
+  },
+  "s24": {
+    "1000": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    }
+  },
+  "s25": {
+    "129": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "131": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "136": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "202": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    }
+  },
+  "s9": {
+    "20": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    }
+  },
+  "samsung": {
+    "6": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    },
+    "8": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    },
+    "20": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    },
+    "29": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    },
+    "129": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    },
+    "131": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    },
+    "136": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    },
+    "202": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    },
+    "500": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    },
+    "1000": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    }
+  },
+  "seja": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "ser": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "serve": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "significa": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "sm-a032m": {
+    "29": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "sm-x400n": {
+    "8": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "sm-x620nz": {
+    "6": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "sm-x710n": {
+    "20": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "smartphone": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "substituido": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "tab": {
+    "6": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "8": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "20": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "35": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "tablet": {
+    "4": {
+      "name": 1,
+      "text": 1
+    },
+    "6": {
+      "name": 1,
+      "text": 1
+    },
+    "8": {
+      "name": 1,
+      "text": 1
+    },
+    "14": {
+      "name": 1,
+      "text": 1
+    },
+    "15": {
+      "name": 1,
+      "text": 1
+    },
+    "20": {
+      "name": 1,
+      "text": 1
+    },
+    "35": {
+      "name": 1,
+      "text": 1
+    },
+    "500": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "tcl": {
+    "35": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    }
+  },
+  "telefone": {
+    "1295": {
+      "text": 2
+    }
+  },
+  "tenha": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "tipo": {
+    "1295": {
+      "text": 2
+    }
+  },
+  "trocar": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "turbo": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "ultra": {
+    "202": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    },
+    "1000": {
+      "name": 1,
+      "model": 1,
+      "text": 1
+    }
+  },
+  "uso": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "voce": {
+    "1295": {
+      "text": 1
+    }
+  },
+  "wi-fi": {
+    "8": {
+      "name": 1,
+      "text": 1
+    },
+    "14": {
+      "name": 1,
+      "text": 1
+    },
+    "15": {
+      "name": 1,
+      "text": 1
+    },
+    "35": {
+      "name": 1,
+      "text": 1
+    }
+  },
+  "xiaomi": {
+    "4": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    },
+    "14": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    },
+    "15": {
+      "name": 1,
+      "brand": 1,
+      "text": 1
+    }
+  }
+}
