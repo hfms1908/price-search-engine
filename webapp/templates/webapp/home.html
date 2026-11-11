@@ -1,0 +1,52 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pesquisa de smartphones</title>
+  <link rel="stylesheet" href="{% static 'webapp/style.css' %}">
+</head>
+<body>
+<main class="container">
+  <header><h1>Pesquisa de smartphones</h1><p>Recuperação de ofertas por índice invertido, busca booleana e TF-IDF.</p></header>
+  <form method="get" action="{% url 'home' %}" class="search-form">
+    <label for="q">Produto desejado</label>
+    <div class="search-row"><input id="q" name="q" type="search" maxlength="200" value="{{ query }}" placeholder="Ex.: Samsung Galaxy S25 256GB" required><button type="submit">Pesquisar</button></div>
+    <div class="filters">
+      <label for="ranking">Ranqueamento <select name="ranking" id="ranking"><option value="vector" {% if ranking == 'vector' %}selected{% endif %}>Vetorial (TF-IDF)</option><option value="boolean" {% if ranking == 'boolean' %}selected{% endif %}>Booleano</option></select></label>
+      <label for="operator">Operador <select name="operator" id="operator"><option value="OR" {% if operator == 'OR' %}selected{% endif %}>OR</option><option value="AND" {% if operator == 'AND' %}selected{% endif %}>AND</option><option value="NOT" {% if operator == 'NOT' %}selected{% endif %}>NOT</option></select></label>
+    </div>
+    <p class="hint">O operador NOT utiliza obrigatoriamente o ranqueamento booleano.</p>
+  </form>
+  {% if error %}<p class="alert" role="alert">{{ error }}</p>{% endif %}
+  {% if query and page_obj %}
+    <section aria-label="Resultados">
+      <h2>Resultados <span class="count">{{ page_obj.paginator.count }} oferta{{ page_obj.paginator.count|pluralize }}{% if page_obj.paginator.count == 1000 %} (limite de exibição){% endif %}</span></h2>
+      {% for product in page_obj %}
+        <article class="product">
+          <div class="product-top">
+            <details class="description">
+              <summary>{{ product.name }}</summary>
+              <p>{% if product.description %}{{ product.description }}{% else %}Descrição não disponível.{% endif %}</p>
+            </details>
+            {% if product.store_url %}<a class="store-link" href="{{ product.store_url }}" target="_blank" rel="noopener noreferrer">Visitar loja ↗</a>{% endif %}
+          </div>
+          <div class="metadata">
+            {% if product.brand %}<span>Marca: {{ product.brand }}</span>{% endif %}
+            {% if product.model %}<span>Modelo: {{ product.model }}</span>{% endif %}
+            {% if product.ram != None %}<span>RAM: {{ product.ram|floatformat:"-1" }} GB</span>{% endif %}
+            {% if product.storage != None %}<span>Armazenamento: {{ product.storage|floatformat:"-1" }} GB</span>{% endif %}
+          </div>
+          <div class="product-footer"><strong class="price">{{ product.price|default:'Preço não disponível' }}</strong>{% if product.score %}<span class="score">Similaridade: {{ product.score }}</span>{% endif %}</div>
+        </article>
+      {% empty %}<p>Nenhuma oferta encontrada para esta consulta.</p>{% endfor %}
+      {% if page_obj.has_other_pages %}<nav class="pagination" aria-label="Paginação">
+        {% if page_obj.has_previous %}<a href="?q={{ query|urlencode }}&operator={{ operator }}&ranking={{ ranking }}&page={{ page_obj.previous_page_number }}">← Anterior</a>{% endif %}
+        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a href="?q={{ query|urlencode }}&operator={{ operator }}&ranking={{ ranking }}&page={{ page_obj.next_page_number }}">Próxima →</a>{% endif %}
+      </nav>{% endif %}
+    </section>
+  {% endif %}
+</main>
+</body></html>
