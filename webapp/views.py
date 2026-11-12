@@ -5,6 +5,7 @@ from urllib.parse import urlsplit
 
 from django.conf import settings
 from django.core.paginator import Paginator
+from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import render
 
 from search.search import SearchEngine
@@ -33,6 +34,20 @@ def safe_offer_url(value):
         return value
     except ValueError:
         return None
+
+
+def warmup(request):
+    """Aquece o cache de busca; acessível apenas via loopback local."""
+    remote_addr = request.META.get('REMOTE_ADDR', '')
+    if remote_addr not in ('127.0.0.1', '::1'):
+        return HttpResponseForbidden('Aquecimento disponível apenas localmente.')
+    
+    try:
+        get_search_engine()
+    except (OSError, ValueError, KeyError) as exc:
+        return JsonResponse({'status': 'error', 'detail': 'Falha ao carregar o índice.'}, status=503)
+    
+    return JsonResponse({'status': 'ready'})
 
 
 def home(request):

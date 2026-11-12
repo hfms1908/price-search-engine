@@ -116,3 +116,27 @@ class SortingAndPaginationTests(SimpleTestCase):
         loader.return_value.search.return_value = self.sample_products(2)
         response = self.client.get('/', {'q': 'galaxy', 'sort': 'invalid'})
         self.assertEqual(response.context['sort'], 'relevance')
+
+
+class WarmupTests(SimpleTestCase):
+    def setUp(self):
+        get_search_engine.cache_clear()
+
+    @patch('webapp.views.get_search_engine')
+    def test_warmup_loads_engine_without_query(self, loader):
+        response = self.client.get('/warmup/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['status'], 'ready')
+        loader.assert_called_once_with()
+
+    @patch('webapp.views.get_search_engine')
+    def test_warmup_rejects_non_local_requests(self, loader):
+        response = self.client.get('/warmup/', REMOTE_ADDR='192.0.2.10')
+        self.assertEqual(response.status_code, 403)
+        loader.assert_not_called()
+
+    @patch('webapp.views.get_search_engine', side_effect=OSError('Índice ausente'))
+    def test_warmup_reports_index_error(self, loader):
+        response = self.client.get('/warmup/')
+        self.assertEqual(response.status_code, 503)
+        self.assertEqual(response.json()['status'], 'error')
