@@ -78,6 +78,7 @@ def build_index(processed_dir: Path = PROCESSED_DIR, index_dir: Path = INDEX_DIR
                 'category': product.get('category'),
                 'url': product.get('url') or data.get('url'),
                 'attributes': attrs,
+                'text': product.get('text') or '',
                 'extraction_source': product.get('extraction_source'),
             }
             
