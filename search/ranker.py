@@ -13,13 +13,15 @@ def tf_weight(frequency: float) -> float:
 class VectorRanker:
     """Pré-calcula normas dos documentos uma única vez por índice carregado."""
 
-    def __init__(self, inverted_index: Mapping, document_ids, field_weights=None):
+    def __init__(self, inverted_index: Mapping, document_ids, field_weights=None,
+                 vector_index: Mapping | None = None):
         self.index = inverted_index
         self.document_ids = set(document_ids)
         self.weights = dict(FIELD_WEIGHTS if field_weights is None else field_weights)
         
         if (not self.weights or
             any(not isinstance(w, (int, float))
+                or isinstance(w, bool)
                 or not math.isfinite(w)
                 or w < 0
                 for w in self.weights.values()
@@ -30,8 +32,44 @@ class VectorRanker:
         self.n = len(self.document_ids)
         self.norms_squared = defaultdict(float)
         self.idf = {}
-        
-        for term, postings in inverted_index.items():
+
+        if vector_index is not None:
+            self._load_precomputed(vector_index)
+        else:
+            self._calculate_vectors()
+
+    def _load_precomputed(self, vector_index: Mapping) -> None:
+        """Carrega IDF e normas previamente calculados pelo indexador."""
+        from indexer.vector import VECTOR_FORMAT_VERSION, TF_FORMULA, IDF_FORMULA
+
+        if (vector_index.get('format_version') != VECTOR_FORMAT_VERSION
+            or vector_index.get('tf_formula') != TF_FORMULA
+            or vector_index.get('idf_formula') != IDF_FORMULA):
+            raise ValueError('vector_index.json possui versão ou fórmulas incompatíveis')
+        if vector_index.get('field_weights') != self.weights:
+            raise ValueError('vector_index.json possui pesos de campos incompatíveis')
+        if vector_index.get('document_count') != self.n:
+            raise ValueError('vector_index.json possui quantidade de documentos incompatível')
+
+        idf = vector_index.get('idf')
+        norms = vector_index.get('document_norms')
+        if not isinstance(idf, dict) or set(idf) != set(self.index):
+            raise ValueError('vector_index.json possui vocabulário incompatível')
+        if not isinstance(norms, dict) or set(norms) != self.document_ids:
+            raise ValueError('vector_index.json possui documentos incompatíveis')
+        if any(not isinstance(v, (int, float)) or isinstance(v, bool)
+               or not math.isfinite(v) or v <= 0 for v in idf.values()):
+            raise ValueError('vector_index.json possui valores IDF inválidos')
+        if any(not isinstance(v, (int, float)) or isinstance(v, bool)
+               or not math.isfinite(v) or v < 0 for v in norms.values()):
+            raise ValueError('vector_index.json possui normas inválidas')
+
+        self.idf = dict(idf)
+        self.norms_squared = {doc_id: norm * norm for doc_id, norm in norms.items()}
+
+    def _calculate_vectors(self) -> None:
+        """Compatibilidade com índices antigos que não possuem vector_index.json."""
+        for term, postings in self.index.items():
             df = len(set(postings) & self.document_ids)
             if not df: continue
             

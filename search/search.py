@@ -28,7 +28,12 @@ class SearchEngine:
             if not set(postings) <= set(self.products):
                 raise ValueError(f'Índice contém doc_id desconhecido no termo {term!r}')
         
-        self.ranker = VectorRanker(self.inverted_index, self.products, field_weights)
+        vector_path = directory / 'vector_index.json'
+        vector_data = load('vector_index.json') if vector_path.is_file() else None
+        self.ranker = VectorRanker(
+            self.inverted_index, self.products, field_weights,
+            vector_index=vector_data,
+        )
 
     def search(self, query: str, *, operator='OR', ranking='vector', limit=DEFAULT_LIMIT):
         """Consulta simples com AND/OR/NOT e ordenação vetorial ou booleana.
