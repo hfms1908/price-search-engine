@@ -8,6 +8,7 @@ from indexer.config import PROCESSED_DIR, INDEX_DIR
 from indexer.tokenizer import tokenize
 from indexer.stats import make_statistics
 from indexer.storage import save_json
+from indexer.vector import build_vector_index
 
 logger = logging.getLogger(__name__)
 
@@ -89,14 +90,17 @@ def build_index(processed_dir: Path = PROCESSED_DIR, index_dir: Path = INDEX_DIR
         for term, entries in sorted(index.items())
     }
 
+    vector_index = build_vector_index(ordered, products)
     statistics = make_statistics(read, products, ordered, time.perf_counter() - started)
     sizes = {}
     sizes['inverted_index.json'] = save_json(index_dir / 'inverted_index.json', ordered, sort_keys=False)
     sizes['products.json'] = save_json(index_dir / 'products.json', products, sort_keys=False)
     sizes['document_map.json'] = save_json(index_dir / 'document_map.json', document_map, sort_keys=False)
+    sizes['vector_index.json'] = save_json(index_dir / 'vector_index.json', vector_index, sort_keys=False)
     statistics['index_file_bytes'] = sizes['inverted_index.json']
     statistics['products_file_bytes'] = sizes['products.json']
     statistics['document_map_file_bytes'] = sizes['document_map.json']
+    statistics['vector_index_file_bytes'] = sizes['vector_index.json']
     
     save_json(index_dir / 'statistics.json', statistics)
     
@@ -114,6 +118,7 @@ def print_report(stats):
         ('Listas de ocorrência', 'postings'),
         ('Ocorrências de termos', 'term_occurrences'),
         ('Tamanho do índice (bytes)', 'index_file_bytes'),
+        ('Tamanho vetorial (bytes)', 'vector_index_file_bytes'),
         ('Tempo (segundos)', 'elapsed_seconds'),
         ('Produtos/segundo', 'products_per_second'),
     ):
