@@ -15,7 +15,8 @@
     <div class="search-row"><input id="q" name="q" type="search" maxlength="200" value="{{ query }}" placeholder="Ex.: Samsung Galaxy S25 256GB" required><button type="submit">Pesquisar</button></div>
     <div class="filters">
       <label for="ranking">Ranqueamento <select name="ranking" id="ranking"><option value="vector" {% if ranking == 'vector' %}selected{% endif %}>Vetorial (TF-IDF)</option><option value="boolean" {% if ranking == 'boolean' %}selected{% endif %}>Booleano</option></select></label>
-      <label for="operator">Operador <select name="operator" id="operator"><option value="OR" {% if operator == 'OR' %}selected{% endif %}>OR</option><option value="AND" {% if operator == 'AND' %}selected{% endif %}>AND</option><option value="NOT" {% if operator == 'NOT' %}selected{% endif %}>NOT</option></select></label>
+      <label for="operator">Operador <select name="operator" id="operator"><option value="AND" {% if operator == 'AND' %}selected{% endif %}>AND</option><option value="OR" {% if operator == 'OR' %}selected{% endif %}>OR</option><option value="NOT" {% if operator == 'NOT' %}selected{% endif %}>NOT</option></select></label>
+      <div class="sort-filter"><label for="sort">Ordenar por <select name="sort" id="sort"><option value="relevance" {% if sort == 'relevance' %}selected{% endif %}>Relevância (padrão)</option><option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Menor preço</option><option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Maior preço</option></select></label></div>
     </div>
     <p class="hint">O operador NOT utiliza obrigatoriamente o ranqueamento booleano.</p>
   </form>
@@ -41,11 +42,37 @@
           <div class="product-footer"><strong class="price">{{ product.price|default:'Preço não disponível' }}</strong>{% if product.score %}<span class="score">Similaridade: {{ product.score }}</span>{% endif %}</div>
         </article>
       {% empty %}<p>Nenhuma oferta encontrada para esta consulta.</p>{% endfor %}
-      {% if page_obj.has_other_pages %}<nav class="pagination" aria-label="Paginação">
-        {% if page_obj.has_previous %}<a href="?q={{ query|urlencode }}&operator={{ operator }}&ranking={{ ranking }}&page={{ page_obj.previous_page_number }}">← Anterior</a>{% endif %}
-        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-        {% if page_obj.has_next %}<a href="?q={{ query|urlencode }}&operator={{ operator }}&ranking={{ ranking }}&page={{ page_obj.next_page_number }}">Próxima →</a>{% endif %}
-      </nav>{% endif %}
+      {% if page_obj.has_other_pages %}
+      <nav class="pagination" aria-label="Paginação">
+        <a class="pagination-edge{% if not page_obj.has_previous %} disabled{% endif %}"
+           {% if page_obj.has_previous %}href="?q={{ query|urlencode }}&amp;operator={{ operator }}&amp;ranking={{ ranking }}&amp;sort={{ sort }}&amp;page=1"{% else %}aria-disabled="true"{% endif %}
+           aria-label="Primeira página">« Início</a>
+        <div class="pagination-center">
+          {% if page_obj.has_previous %}
+            <a class="pagination-nav" href="?q={{ query|urlencode }}&amp;operator={{ operator }}&amp;ranking={{ ranking }}&amp;sort={{ sort }}&amp;page={{ page_obj.previous_page_number }}" aria-label="Página anterior"><span aria-hidden="true">‹</span> Anterior</a>
+          {% else %}
+            <span class="pagination-nav disabled" aria-disabled="true">‹ Anterior</span>
+          {% endif %}
+          <div class="pagination-pages">
+            {% for number in page_numbers %}
+              {% if number == page_obj.number %}
+                <span class="page-number current" aria-current="page">{{ number }}</span>
+              {% else %}
+                <a class="page-number" href="?q={{ query|urlencode }}&amp;operator={{ operator }}&amp;ranking={{ ranking }}&amp;sort={{ sort }}&amp;page={{ number }}" aria-label="Página {{ number }}">{{ number }}</a>
+              {% endif %}
+            {% endfor %}
+          </div>
+          {% if page_obj.has_next %}
+            <a class="pagination-nav" href="?q={{ query|urlencode }}&amp;operator={{ operator }}&amp;ranking={{ ranking }}&amp;sort={{ sort }}&amp;page={{ page_obj.next_page_number }}" aria-label="Próxima página">Próxima <span aria-hidden="true">›</span></a>
+          {% else %}
+            <span class="pagination-nav disabled" aria-disabled="true">Próxima ›</span>
+          {% endif %}
+        </div>
+        <a class="pagination-edge{% if not page_obj.has_next %} disabled{% endif %}"
+           {% if page_obj.has_next %}href="?q={{ query|urlencode }}&amp;operator={{ operator }}&amp;ranking={{ ranking }}&amp;sort={{ sort }}&amp;page={{ page_obj.paginator.num_pages }}"{% else %}aria-disabled="true"{% endif %}
+           aria-label="Última página">Fim »</a>
+      </nav>
+      {% endif %}
     </section>
   {% endif %}
 </main>
