@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from indexer.indexer import build_index
-from search.query import query_terms
+from search.query import query_terms, query_groups
 from search.retriever import boolean_retrieve
 from search.ranker import VectorRanker
 from search.search import SearchEngine
@@ -97,6 +97,32 @@ class SearchIntegrationTests(unittest.TestCase):
     def test_query_uses_same_tokenizer(self):
         self.assertEqual(query_terms('Samsung Galaxy S25 256 GB'),
                          ['samsung', 'galaxy', 's25', '256gb'])
+
+    def test_quoted_query_groups(self):
+        self.assertEqual(query_groups('"Iphone 16" "Samsung S25"'),
+                         [['iphone', '16'], ['samsung', 's25']])
+        self.assertEqual(query_groups("'Samsung S25' 'Motorola Signature 27'"),
+                         [['samsung', 's25'], ['motorola', 'signature', '27']])
+        self.assertEqual(query_groups('"Iphone 16\''), [['iphone', '16']])
+        self.assertEqual(query_groups('"Iphone 16" Samsung'),
+                         [['iphone', '16'], ['samsung']])
+        self.assertEqual(query_groups('Iphone Samsung'), [['iphone'], ['samsung']])
+
+    def test_quoted_or_matches_complete_groups(self):
+        results = self.engine.search('"Iphone 16" "Samsung S25"',
+                                     operator='OR', ranking='boolean')
+        self.assertEqual({r['product_id'] for r in results}, {'p1', 'p3'})
+        results = self.engine.search('"Iphone 16"', operator='OR', ranking='boolean')
+        self.assertEqual([r['product_id'] for r in results], ['p3'])
+        results = self.engine.search('"Samsung S25"', operator='OR', ranking='boolean')
+        self.assertEqual([r['product_id'] for r in results], ['p1'])
+
+    def test_unquoted_or_and_mixed_quotes(self):
+        self.assertEqual(len(self.engine.search('Samsung Iphone', operator='OR')) , 3)
+        self.assertEqual([r['product_id'] for r in self.engine.search(
+            '"Iphone 16\'', operator='OR', ranking='boolean')], ['p3'])
+        self.assertEqual({r['product_id'] for r in self.engine.search(
+            '"Samsung S25" Iphone', operator='OR', ranking='boolean')}, {'p1', 'p3'})
 
     def test_and_and_metadata(self):
         results = self.engine.search('Samsung S25 256GB', operator='AND')

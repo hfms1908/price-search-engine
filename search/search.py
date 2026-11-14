@@ -6,7 +6,7 @@ import argparse
 import json
 from pathlib import Path
 from search.config import DEFAULT_LIMIT, INDEX_DIR
-from search.query import query_terms
+from search.query import query_terms, query_groups
 from search.ranker import VectorRanker
 from search.retriever import boolean_retrieve
 
@@ -54,7 +54,16 @@ class SearchEngine:
             raise ValueError('NOT exige ranking=boolean')
         
         terms = query_terms(query)
-        candidates = boolean_retrieve(self.inverted_index, terms, operator, self.products)
+        groups = query_groups(query)
+        if operator == 'OR':
+            # AND dentro das aspas; OR entre os grupos.
+            candidates = set().union(*(
+                boolean_retrieve(self.inverted_index, group, 'AND')
+                for group in groups
+            )) if groups else set()
+        else:
+            # AND e NOT preservam a semântica global anterior.
+            candidates = boolean_retrieve(self.inverted_index, terms, operator, self.products)
         
         if ranking == 'vector':
             scored = self.ranker.rank(terms, candidates)
