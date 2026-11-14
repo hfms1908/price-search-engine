@@ -225,16 +225,16 @@ __marimo__/
 .streamlit/secrets.toml
 
 # Dados coletados e gerados
-/data/raw*
-/data/processed*
-/data/index*
-/data/logs*
+data/raw*
+data/processed*
+data/index*
+data/logs*
 
 # Manter apenas os diretórios principais
-!/data/raw/
-!/data/processed/
-!/data/index/
-!/data/logs/
+!data/raw/
+!data/processed/
+!data/index/
+!data/logs/
 
 # Permitir somente os arquivos .gitkeep
 !data/raw/.gitkeep
@@ -243,10 +243,10 @@ __marimo__/
 !data/logs/.gitkeep
 
 # Ignorar todo o conteúdo dos diretórios principais
-/data/raw/*
-/data/processed/*
-/data/index/*
-/data/logs/*
+data/raw/*
+data/processed/*
+data/index/*
+data/logs/*
 
 # Crawlee
 storage/
