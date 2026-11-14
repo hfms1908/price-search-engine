@@ -140,3 +140,37 @@ class WarmupTests(SimpleTestCase):
         response = self.client.get('/warmup/')
         self.assertEqual(response.status_code, 503)
         self.assertEqual(response.json()['status'], 'error')
+
+
+class AutomaticSortSubmissionTests(SimpleTestCase):
+    @patch('webapp.views.get_search_engine')
+    def test_sort_auto_submit_enabled_after_search(self, loader):
+        loader.return_value.search.return_value = [
+            {'name': 'Produto', 'attributes': {'price_brl': 100}, 'score': 1.0}
+        ]
+        response = self.client.get('/', {'q': 'produto'})
+        self.assertContains(response, 'data-has-search="true"')
+        self.assertContains(response, "sortSelect.addEventListener('change'")
+        self.assertContains(response, 'searchForm.requestSubmit()')
+
+    @patch('webapp.views.get_search_engine')
+    def test_sort_does_not_submit_without_search(self, loader):
+        response = self.client.get('/')
+        self.assertContains(response, 'data-has-search="false"')
+        loader.assert_not_called()
+
+    @patch('webapp.views.get_search_engine')
+    def test_changing_sort_preserves_query_and_filters(self, loader):
+        loader.return_value.search.return_value = [
+            {'name': 'Mais caro', 'attributes': {'price_brl': 200}, 'score': 0.9},
+            {'name': 'Mais barato', 'attributes': {'price_brl': 100}, 'score': 0.8},
+        ]
+        response = self.client.get('/', {
+            'q': 'galaxy', 'operator': 'OR', 'ranking': 'boolean', 'sort': 'price_asc',
+        })
+        self.assertEqual([p['name'] for p in response.context['page_obj']],
+                         ['Mais barato', 'Mais caro'])
+        self.assertContains(response, 'value="galaxy"')
+        self.assertContains(response, 'value="price_asc" selected')
+        self.assertContains(response, 'value="OR" selected')
+        self.assertContains(response, 'value="boolean" selected')

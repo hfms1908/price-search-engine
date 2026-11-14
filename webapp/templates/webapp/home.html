@@ -10,7 +10,7 @@
 <body>
 <main class="container">
   <header><h1>Pesquisa de smartphones</h1><p>Recuperação de ofertas por índice invertido, busca booleana e TF-IDF.</p></header>
-  <form method="get" action="{% url 'home' %}" class="search-form">
+  <form method="get" action="{% url 'home' %}" class="search-form" id="search-form" data-has-search="{% if query and page_obj %}true{% else %}false{% endif %}">
     <label for="q">Produto desejado</label>
     <div class="search-row"><input id="q" name="q" type="search" maxlength="200" value="{{ query }}" placeholder="Ex.: Samsung Galaxy S25 256GB" required><button type="submit">Pesquisar</button></div>
     <div class="filters">
@@ -76,4 +76,18 @@
     </section>
   {% endif %}
 </main>
+<script>
+  // Reordena somente quando há pesquisa anterior e o campo contém texto.
+  const searchForm = document.getElementById('search-form');
+  const searchInput = document.getElementById('q');
+  const sortSelect = document.getElementById('sort');
+
+  sortSelect.addEventListener('change', () => {
+    if (searchForm.dataset.hasSearch === 'true' &&
+        searchInput.value.trim() !== ''
+    ) {
+      searchForm.requestSubmit();
+    }
+  });
+</script>
 </body></html>
