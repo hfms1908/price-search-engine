@@ -8,8 +8,31 @@ from processor.normalizer import normalize_capacities
 
 MODEL_PATTERN = re.compile(r'\b(?:' + '|'.join(MODEL_PATTERNS.values()) + r')\b', re.I)
 CAPACITY = re.compile(r'(?<![\w])(?P<num>\d+(?:[.,]\d+)?)\s*(?P<unit>GB|TB|MB)\b', re.I)
-RAM = re.compile(r'(?<![\w])(\d+(?:[.,]\d+)?)\s*(GB|TB|MB)\s*(?:de\s*)?(?:ram|mem[oó]ria\s+ram)\b|\b(?:ram|mem[oó]ria\s+ram)\s*(?:de\s*)?(\d+(?:[.,]\d+)?)\s*(GB|TB|MB)\b', re.I)
-STORAGE = re.compile(r'(?<![\w])(\d+(?:[.,]\d+)?)\s*(GB|TB)\s*(?:de\s*)?(?:armazenamento|mem[oó]ria\s+interna|rom)\b|\b(?:armazenamento|mem[oó]ria\s+interna|rom)\s*(?:de\s*)?(\d+(?:[.,]\d+)?)\s*(GB|TB)\b', re.I)
+RAM = re.compile(
+    r'(?<![\w])(\d+(?:[.,]\d+)?)\s*(GB|TB|MB)\s*(?:de\s*)?(?:ram|mem[oó]ria\s+ram)\b(?!\s*:)'
+    r'|\b(?:ram|mem[oó]ria\s+ram)\s*(?::\s*|de\s+|\s+)(\d+(?:[.,]\d+)?)\s*(GB|TB|MB)\b', re.I
+)
+STORAGE = re.compile(
+    r'(?<![\w])(\d+(?:[.,]\d+)?)\s*(GB|TB|MB)\s*(?:de\s*)?(?:armazenamento(?:\s+interno)?|mem[oó]ria\s+interna|rom)\b(?!\s*:)'
+    r'|\b(?:armazenamento(?:\s+interno)?|mem[oó]ria\s+interna|rom)\s*(?::\s*|de\s+|\s+)(\d+(?:[.,]\d+)?)\s*(GB|TB|MB)\b', re.I
+)
+# Remove a capacidade de cartões externos antes de procurar RAM ou armazenamento.
+# A expressão para no primeiro valor de capacidade para não consumir o próximo atributo.
+CARD_MEMORY = re.compile(
+    r'\b(?:cart[aã]o\s+de\s+mem[oó]ria|(?:cart[aã]o\s+)?micro\s*sd|'
+    r'mem[oó]ria\s+expans[ií]vel|expans[aã]o\s+(?:por\s+)?cart[aã]o)\b'
+    r'(?:(?![.;\n]|\b(?:mem[oó]ria\s+ram|ram|mem[oó]ria\s+interna|armazenamento)\b).){0,100}?'
+    r'\b\d+(?:[.,]\d+)?\s*(?:GB|TB|MB)\b', re.I
+)
+CARD_FLAG = re.compile(r'\b(?:cart[aã]o\s+de\s+mem[oó]ria|micro\s*sd)\b', re.I)
+
+
+def _without_card_memory(value):
+    """Descarta capacidade de cartão externo, preservando atributos seguintes."""
+    value = CARD_MEMORY.sub(' ', value)
+    # Rótulos sem capacidade não devem modificar outras especificações.
+    return value
+
 PRICE = re.compile(r'R\$\s*(\d{1,3}(?:\.\d{3})*,\d{2}|\d+,\d{2})')
 
 def _gb(value, unit):
@@ -30,9 +53,9 @@ def _clean(value):
     return normalize_capacities(html_lib.unescape(BeautifulSoup(str(value or ''),'html.parser').get_text(' ',strip=True)))
 
 def extract_attributes(title: str, text: str = '', url: str = '') -> dict:
-    name = _clean(title)
+    name = _without_card_memory(_clean(title))
     # Texto complementar só é usado quando descreve o mesmo produto (fornecido pelo chamador).
-    detail = _clean(text)[:1800]
+    detail = _without_card_memory(_clean(text)[:1800])
     brand = None
     
     for key, display in BRANDS.items():
@@ -49,8 +72,8 @@ def extract_attributes(title: str, text: str = '', url: str = '') -> dict:
     ram = _match_capacity(RAM.search(name))
     if ram is None: ram = _match_capacity(RAM.search(detail))
     
-    # Capacidade sem rótulo: 4GB a 12GB indica RAM e 64GB ou mais
-    # indica armazenamento. Não inferir 16GB/32GB nem capacidades em MB.
+    # Capacidade sem rótulo: 1GB a 12GB indica RAM e 64GB ou mais indica armazenamento.
+    # Não inferir 16GB/32GB nem capacidades em MB.
     # Somente o nome da oferta é usado para evitar dados de outros produtos.
     if ram is None:
         capacities = [
@@ -59,7 +82,7 @@ def extract_attributes(title: str, text: str = '', url: str = '') -> dict:
             if m.group('unit').lower() == 'gb'
         ]
         
-        ram_candidates = [v for v in capacities if v in (4, 6, 8, 12)]
+        ram_candidates = [v for v in capacities if v in (1, 2, 3, 4, 6, 8, 10, 12)]
         if ram_candidates:
             ram = ram_candidates[0]
 
@@ -77,8 +100,16 @@ def extract_attributes(title: str, text: str = '', url: str = '') -> dict:
         
         plausible = [v for v in candidates if v>=64 and (ram is None or v > ram)]
         if plausible: storage = max(plausible)
+        # Capacidade isolada de 32 GB representa armazenamento.
+        elif len(candidates) == 1 and candidates[0] >= 32 and ram is None:
+            storage = candidates[0]
     
     if storage is None: storage = _match_capacity(STORAGE.search(detail))
+
+    # Uma capacidade >= 32 GB atribuída à RAM pode ser armazenamento.
+    # Quando o armazenamento é menor, os campos foram trocados.
+    if ram is not None and ram >= 32 and (storage is None or storage < ram):
+        storage, ram = ram, storage
 
     # Nunca obter preço de um texto genérico da página ou de outros produtos.
     pm = PRICE.search(name)
