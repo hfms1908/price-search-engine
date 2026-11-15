@@ -12,6 +12,19 @@ from processor.normalizer import normalize_capacities
 CARD_SELECTORS = ('[itemtype*="schema.org/Product"]', '[data-product-id]', '[data-testid="product-card"]', '.product-card', '.product-item', 'article.product')
 PRICE_RE = re.compile(r'R\$\s*([\d.,]+)')
 
+# Acessórios não devem ser tratados como smartphones ou tablets.
+EXCLUDED_NAME_PREFIX = re.compile(r'^\s*(?:capa|capinha|carcasa|case|fone|pel[ií]cula|suporte)\b', re.I)
+EXCLUDED_NAME_TERMS = re.compile(
+    r'\b(?:ccabo|cabo|carregador|rugged\s+case|card\s+case|'
+    r'capa\s+de\s+prote[cç][aã]o|capa\s+para|capa\s+magn[eé]tica|capa\s+compat[ií]vel\s+com|'
+    r'card\s+slot\s+case|silicone\s+case|magnet\s+case)\b', re.I
+)
+
+def is_excluded_product_name(name: str) -> bool:
+    """Rejeita acessórios pelo nome da oferta, sem consultar a descrição."""
+    name = html_lib.unescape(str(name or '')).strip()
+    return bool(EXCLUDED_NAME_PREFIX.search(name) or EXCLUDED_NAME_TERMS.search(name))
+
 
 def _walk_json(obj):
     if isinstance(obj, list):
@@ -48,6 +61,8 @@ def _price_from_offers(offers):
 def _product(name, description, url, price=None, source='html'):
     name = normalize_capacities(html_lib.unescape(str(name or '').strip()))
     
+    if is_excluded_product_name(name): return None
+
     description = normalize_capacities(
         BeautifulSoup(html_lib.unescape(str(description or '')), 'html.parser').get_text(' ', strip=True)
     )[:1000]
@@ -115,6 +130,7 @@ def extract_products(html: str, page_url: str, page_title: str = '', cleaned_tex
             if isinstance(brand,dict): brand = brand.get('name','')
             
             name = obj.get('name','')
+            if is_excluded_product_name(name): continue
             if brand and str(brand).casefold() not in str(name).casefold(): name = f'{brand} {name}'
             
             p = _product(name,description,urljoin(page_url,str(link)),_price_from_offers(obj.get('offers')),'json_ld')
