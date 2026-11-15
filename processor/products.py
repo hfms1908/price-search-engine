@@ -13,7 +13,9 @@ CARD_SELECTORS = ('[itemtype*="schema.org/Product"]', '[data-product-id]', '[dat
 PRICE_RE = re.compile(r'R\$\s*([\d.,]+)')
 
 # Acessórios não devem ser tratados como smartphones ou tablets.
-EXCLUDED_NAME_PREFIX = re.compile(r'^\s*(?:capa|capinha|carcasa|case|fone|pel[ií]cula|suporte)\b', re.I)
+EXCLUDED_NAME_PREFIX = re.compile(
+    r'^\s*(?:adaptador|caneta|capa|capinha|carcasa|case|fone|pel[ií]cula|suporte)\b', re.I
+)
 EXCLUDED_NAME_TERMS = re.compile(
     r'\b(?:ccabo|cabo|carregador|rugged\s+case|card\s+case|'
     r'capa\s+de\s+prote[cç][aã]o|capa\s+para|capa\s+magn[eé]tica|capa\s+compat[ií]vel\s+com|'
