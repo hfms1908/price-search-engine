@@ -35,11 +35,12 @@ class SearchEngine:
             vector_index=vector_data,
         )
 
-    def search(self, query: str, *, operator='OR', ranking='vector', limit=DEFAULT_LIMIT):
+    def search(self, query: str, *, operator='OR', ranking='vector', limit=DEFAULT_LIMIT,
+               include_without_price=False):
         """Consulta simples com AND/OR/NOT e ordenação vetorial ou booleana.
 
         NOT com ranking='boolean' retorna os documentos complementares sem score
-        textual. A opção NOT com ranking vetorial é rejeitada porque documentos
+        textual. Por padrão, ofertas sem preço são excluídas. A opção NOT com ranking vetorial é rejeitada porque documentos
         excluídos não contêm os termos e não têm relevância textual positiva.
         """
         if not isinstance(limit, int) or isinstance(limit, bool) or limit < 0:
@@ -71,8 +72,14 @@ class SearchEngine:
             scored = [(doc_id, None) for doc_id in sorted(candidates, key=lambda x: int(x) if x.isdigit() else x)]
         
         results = []
-        
-        for doc_id, score in scored[:limit]:
+
+        for doc_id, score in scored:
+            if not include_without_price:
+                attributes = self.products[doc_id].get('attributes') or {}
+                if attributes.get('price_brl') is None:
+                    continue
+            if len(results) >= limit:
+                break
             results.append({
                 'doc_id': doc_id,
                 'score': round(score, 6) if score is not None else None,
@@ -91,13 +98,16 @@ def main():
     parser.add_argument('--operator', choices=['AND', 'OR', 'NOT'], default='OR')
     parser.add_argument('--ranking', choices=['vector', 'boolean'], default='vector')
     parser.add_argument('--limit', type=int, default=DEFAULT_LIMIT)
+    parser.add_argument('--include-without-price', action='store_true',
+                        help='Inclui produtos sem preço na resposta')
     
     args = parser.parse_args()
     
     engine = SearchEngine(args.index_dir)
     
     print(json.dumps(
-            engine.search(args.query, operator=args.operator, ranking=args.ranking, limit=args.limit),
+            engine.search(args.query, operator=args.operator, ranking=args.ranking, limit=args.limit,
+                          include_without_price=args.include_without_price),
             ensure_ascii=False, indent=2
         )
     )

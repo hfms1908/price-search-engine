@@ -114,7 +114,7 @@ class RealIndexSampleTests(unittest.TestCase):
         self.assertEqual(result['attributes']['price_brl'], 7299.1)
 
     def test_missing_attributes_are_preserved(self):
-        result = next(r for r in self.engine.search('Tcl Tab 11', limit=21)
+        result = next(r for r in self.engine.search('Tcl Tab 11', limit=21, include_without_price=True)
                       if r['doc_id'] == '35')
         self.assertIsNone(result['attributes']['model'])
         self.assertIsNone(result['attributes']['price_brl'])

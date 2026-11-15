@@ -74,6 +74,7 @@ def home(request):
         try:
             matches = get_search_engine().search(
                 query, operator=operator, ranking=ranking, limit=MAX_RESULTS,
+                include_without_price=False,
             )
             
             for product in matches:

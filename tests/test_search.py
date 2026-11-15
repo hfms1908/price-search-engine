@@ -110,19 +110,19 @@ class SearchIntegrationTests(unittest.TestCase):
 
     def test_quoted_or_matches_complete_groups(self):
         results = self.engine.search('"Iphone 16" "Samsung S25"',
-                                     operator='OR', ranking='boolean')
+                                     operator='OR', ranking='boolean', include_without_price=True)
         self.assertEqual({r['product_id'] for r in results}, {'p1', 'p3'})
-        results = self.engine.search('"Iphone 16"', operator='OR', ranking='boolean')
+        results = self.engine.search('"Iphone 16"', operator='OR', ranking='boolean', include_without_price=True)
         self.assertEqual([r['product_id'] for r in results], ['p3'])
-        results = self.engine.search('"Samsung S25"', operator='OR', ranking='boolean')
+        results = self.engine.search('"Samsung S25"', operator='OR', ranking='boolean', include_without_price=True)
         self.assertEqual([r['product_id'] for r in results], ['p1'])
 
     def test_unquoted_or_and_mixed_quotes(self):
-        self.assertEqual(len(self.engine.search('Samsung Iphone', operator='OR')) , 3)
+        self.assertEqual(len(self.engine.search('Samsung Iphone', operator='OR', include_without_price=True)) , 3)
         self.assertEqual([r['product_id'] for r in self.engine.search(
-            '"Iphone 16\'', operator='OR', ranking='boolean')], ['p3'])
+            '"Iphone 16\'', operator='OR', ranking='boolean', include_without_price=True)], ['p3'])
         self.assertEqual({r['product_id'] for r in self.engine.search(
-            '"Samsung S25" Iphone', operator='OR', ranking='boolean')}, {'p1', 'p3'})
+            '"Samsung S25" Iphone', operator='OR', ranking='boolean', include_without_price=True)}, {'p1', 'p3'})
 
     def test_and_and_metadata(self):
         results = self.engine.search('Samsung S25 256GB', operator='AND')
@@ -137,7 +137,7 @@ class SearchIntegrationTests(unittest.TestCase):
                             for i in range(len(results) - 1)))
 
     def test_boolean_not(self):
-        results = self.engine.search('Samsung', operator='NOT', ranking='boolean')
+        results = self.engine.search('Samsung', operator='NOT', ranking='boolean', include_without_price=True)
         self.assertEqual([r['product_id'] for r in results], ['p3'])
         self.assertIsNone(results[0]['score'])
 
@@ -151,6 +151,26 @@ class SearchIntegrationTests(unittest.TestCase):
             self.engine.search('samsung', operator='NOT')
         with self.assertRaises(ValueError):
             self.engine.search('samsung', limit=-1)
+
+    def test_without_price_excluded_by_default(self):
+        results = self.engine.search('Samsung', ranking='boolean')
+        self.assertEqual([r['product_id'] for r in results], ['p1'])
+
+    def test_include_without_price_true(self):
+        results = self.engine.search('Samsung', ranking='boolean', include_without_price=True)
+        self.assertEqual({r['product_id'] for r in results}, {'p1', 'p2'})
+
+    def test_limit_applies_after_price_filter(self):
+        results = self.engine.search('Samsung', ranking='boolean', limit=1)
+        self.assertEqual([r['product_id'] for r in results], ['p1'])
+        results = self.engine.search('Samsung', ranking='boolean', limit=2, include_without_price=True)
+        self.assertEqual(len(results), 2)
+
+    def test_missing_price_does_not_affect_rank_order(self):
+        all_results = self.engine.search('Samsung', include_without_price=True)
+        priced = self.engine.search('Samsung')
+        self.assertEqual([r['doc_id'] for r in priced],
+                         [r['doc_id'] for r in all_results if r['attributes'].get('price_brl') is not None])
 
     def test_mismatched_files(self):
         (self.index_dir / 'document_map.json').write_text('{}', encoding='utf-8')

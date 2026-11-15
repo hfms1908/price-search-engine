@@ -76,6 +76,12 @@ class SortingAndPaginationTests(SimpleTestCase):
         self.assertEqual([p['name'] for p in response.context['page_obj']], ['Oferta 00', 'Oferta 01', 'Oferta 02'])
 
     @patch('webapp.views.get_search_engine')
+    def test_interface_includes_unpriced_products(self, loader):
+        loader.return_value.search.return_value = self.sample_products(3)
+        self.client.get('/', {'q': 'galaxy'})
+        self.assertIs(loader.return_value.search.call_args.kwargs['include_without_price'], False)
+
+    @patch('webapp.views.get_search_engine')
     def test_ascending_price_missing_last(self, loader):
         loader.return_value.search.return_value = self.sample_products(15)
         response = self.client.get('/', {'q': 'galaxy', 'sort': 'price_asc'})
