@@ -11,6 +11,12 @@ from processor.normalizer import normalize_capacities
 
 CARD_SELECTORS = ('[itemtype*="schema.org/Product"]', '[data-product-id]', '[data-testid="product-card"]', '.product-card', '.product-item', 'article.product')
 PRICE_RE = re.compile(r'R\$\s*([\d.,]+)')
+INSTALLMENT_RE = re.compile(r'\b\d{1,2}\s*x\s*R\$\s*[\d.,]+', re.I)
+PRICE_NODE_SELECTORS = (
+    '[data-testid="product-card::price"], [itemprop="price"], [data-price], '
+    '.price-group, .price, [data-area="price"]'
+)
+
 
 # Acessórios não devem ser tratados como smartphones ou tablets.
 EXCLUDED_NAME_PREFIX = re.compile(
@@ -98,15 +104,46 @@ def _product(name, description, url, price=None, source='html'):
 
 
 def _node_price(node):
-    if not node: return None
-    
+    """Prioriza o preço à vista e nunca confunde uma parcela com preço total."""
+    if not node:
+        return None
+
+    # Classes do comércio eletrônico: o preço PIX/à vista tem prioridade.
+    cash = node.select_one('.price.cash, .price-cash')
+    if cash is not None:
+        value = _node_price(cash)
+        if value is not None:
+            return value
+
+    # Uma classe de parcelas não é fonte de preço final.
+    classes = set(node.get('class', []))
+    if 'months' in classes or 'installment' in classes or 'installments' in classes:
+        return None
+
     for value in (node.get('content'), node.get('data-price'), node.get('value')):
         price = parse_price(value)
-        if price is not None: return price
-    
-    match = PRICE_RE.search(node.get_text(' ',strip=True))
-    
+        if price is not None:
+            return price
+
+    # Remove expressões como "12x R$119,44" antes de procurar preço.
+    text = INSTALLMENT_RE.sub(' ', node.get_text(' ', strip=True))
+    match = PRICE_RE.search(text)
     return parse_price(match.group(1)) if match else None
+
+
+def _card_price(card):
+    """Localiza o preço correto dentro do cartão, sem capturar valores de parcelas."""
+    cash = card.select_one('.price.cash, .price-cash')
+    if cash is not None:
+        price = _node_price(cash)
+        if price is not None:
+            return price
+
+    for node in card.select(PRICE_NODE_SELECTORS):
+        price = _node_price(node)
+        if price is not None:
+            return price
+    return None
 
 
 def extract_products(html: str, page_url: str, page_title: str = '', cleaned_text: str = '', soup=None) -> list[dict]:
@@ -150,11 +187,7 @@ def extract_products(html: str, page_url: str, page_title: str = '', cleaned_tex
             
             target = urljoin(page_url, link.get('href', '')).split('?', 1)[0].rstrip('/')
             
-            price_node = (
-                card.select_one('[data-testid="product-card::price"]')
-                or card.select_one('[itemprop="price"], [data-price], .price, [data-area="price"]')
-            )
-            price = _node_price(price_node)
+            price = _card_price(card)
             if price is not None: prices_by_url[target] = price
         
         for p in found:
@@ -174,11 +207,7 @@ def extract_products(html: str, page_url: str, page_title: str = '', cleaned_tex
             
             url = urljoin(page_url,link.get('href','')) if link else page_url
             
-            price_node = (
-                card.select_one('[data-testid="product-card::price"]')
-                or card.select_one('[itemprop="price"], [data-price], .price, [data-area="price"]')
-            )
-            price = _node_price(price_node)
+            price = _card_price(card)
             
             p = _product(name,'',url,price,'html_card')
             if p: found.append(p)
