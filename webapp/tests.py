@@ -15,6 +15,29 @@ class SearchPageTests(SimpleTestCase):
             loader.assert_not_called()
 
     @patch('webapp.views.get_search_engine')
+    def test_empty_search_shows_message_and_icon(self, loader):
+        loader.return_value.search.return_value = []
+        response = self.client.get('/', {'q': 'produto inexistente'})
+        self.assertContains(response, 'Nenhum resultado encontrado')
+        self.assertContains(response, 'webapp/sad-face.png')
+        self.assertContains(response, 'A pesquisa foi realizada')
+        loader.return_value.search.assert_called_once()
+
+    def test_initial_page_does_not_show_empty_message(self):
+        response = self.client.get('/')
+        self.assertNotContains(response, 'Nenhum resultado encontrado')
+        self.assertNotContains(response, 'webapp/sad-face.png')
+
+    @patch('webapp.views.get_search_engine')
+    def test_search_with_results_does_not_show_empty_message(self, loader):
+        loader.return_value.search.return_value = [
+            {'name': 'Galaxy S25', 'attributes': {'price_brl': 2500}, 'score': 0.8}
+        ]
+        response = self.client.get('/', {'q': 'galaxy'})
+        self.assertContains(response, 'Galaxy S25')
+        self.assertNotContains(response, 'Nenhum resultado encontrado')
+
+    @patch('webapp.views.get_search_engine')
     def test_description_and_store_link(self, loader):
         loader.return_value.search.return_value = [{
             'name': 'Galaxy S25', 'text': 'Descrição do aparelho',

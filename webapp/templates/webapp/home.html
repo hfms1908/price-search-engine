@@ -10,7 +10,7 @@
 <body>
 <main class="container">
   <header><h1>Pesquisa de smartphones</h1><p>Recuperação de ofertas por índice invertido, busca booleana e TF-IDF.</p></header>
-  <form method="get" action="{% url 'home' %}" class="search-form" id="search-form" data-has-search="{% if query and page_obj %}true{% else %}false{% endif %}">
+  <form method="get" action="{% url 'home' %}" class="search-form" id="search-form" data-has-search="{% if query and page_obj != None %}true{% else %}false{% endif %}">
     <label for="q">Produto desejado</label>
     <div class="search-row"><input id="q" name="q" type="search" maxlength="200" value="{{ query }}" placeholder="Ex.: Samsung Galaxy S25 256GB" required><button type="submit">Pesquisar</button></div>
     <div class="filters">
@@ -21,7 +21,7 @@
     <p class="hint">O operador NOT utiliza obrigatoriamente o ranqueamento booleano.</p>
   </form>
   {% if error %}<p class="alert" role="alert">{{ error }}</p>{% endif %}
-  {% if query and page_obj %}
+  {% if query and page_obj != None %}
     <section aria-label="Resultados">
       <h2>Resultados <span class="count">{{ page_obj.paginator.count }} oferta{{ page_obj.paginator.count|pluralize }}{% if page_obj.paginator.count == 1000 %} (limite de exibição){% endif %}</span></h2>
       {% for product in page_obj %}
@@ -41,7 +41,13 @@
           </div>
           <div class="product-footer"><strong class="price">{{ product.price|default:'Preço não disponível' }}</strong>{% if product.score %}<span class="score">Similaridade: {{ product.score }}</span>{% endif %}</div>
         </article>
-      {% empty %}<p>Nenhuma oferta encontrada para esta consulta.</p>{% endfor %}
+      {% empty %}
+        <div class="no-results" role="status" aria-live="polite">
+          <img class="no-results-icon" src="{% static 'webapp/sad-face.png' %}" alt="" aria-hidden="true" width="96" height="96">
+          <p class="no-results-title">Nenhum resultado encontrado</p>
+          <p class="no-results-description">A pesquisa foi realizada, mas não encontramos produtos para os termos informados.</p>
+        </div>
+      {% endfor %}
       {% if page_obj.has_other_pages %}
       <nav class="pagination" aria-label="Paginação">
         <a class="pagination-edge{% if not page_obj.has_previous %} disabled{% endif %}"
